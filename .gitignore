@@ -1,0 +1,9 @@
+**/target
+**/*.py
+**/*.pyc
+Cargo.lock
+**/blender
+**/release
+build.ps1
+modPath.txt
+install.ps1

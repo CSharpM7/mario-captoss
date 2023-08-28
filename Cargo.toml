@@ -1,0 +1,28 @@
+[package]
+name = "captossdownsmash"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[package.metadata.skyline]
+titleid = "01006A800016E000" # Smash Ultimate
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+skyline = "0.2.0"
+skyline_smash = { git = "https://github.com/blu-dev/skyline-smash", features = ["weak_l2cvalue"] }
+smash_script = { git = "https://github.com/blu-dev/smash-script", branch = "development" }
+#smashline.path = "/home/blujay/dev/smashline/crates/smashline"
+smashline = { path = "../smashline/crates/smashline" }
+#sharpsmashlinesuite = { path = "../../SharpSmashlineSuite", features = ["modules"] }
+#arcropolis-api = { git = "https://github.com/Raytwo/arcropolis_api"}
+#lazy_static = "1.4.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true
