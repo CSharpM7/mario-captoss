@@ -1,4 +1,8 @@
 use crate::imports::imports_agent::*;
+pub const SUB_STATUS3:                     i32 = 0x13;
+pub const SUB_STATUS2:                     i32 = 0x14;
+pub const SUB_STATUS:                      i32 = 0x15;
+pub const VECTOR3_ZERO : Vector3f = Vector3f { x: 0.0, y: 0.0, z: 0.0 };
 
 extern "C"{
     /// gets whether we are in training mode
@@ -39,4 +43,14 @@ pub unsafe fn change_status_by_situation(fighter: &mut L2CFighterBase, status_gr
     else{
         fighter.change_status(status_ground,clear_cat);
     }
+}
+
+pub fn get_fighter_common_from_accessor<'a>(boma: &'a mut BattleObjectModuleAccessor) -> &'a mut L2CFighterCommon {
+    unsafe {
+        let lua_module = *(boma as *mut BattleObjectModuleAccessor as *mut u64).add(0x190 / 8);
+        std::mem::transmute(*((lua_module + 0x1D8) as *mut *mut L2CFighterCommon))
+    }
+}
+pub unsafe fn lerp(a: f32, b: f32, t: f32) -> f32 {
+    return a + ((b-a)*t);
 }

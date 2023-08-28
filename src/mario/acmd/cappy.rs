@@ -14,12 +14,15 @@ pub unsafe extern "C" fn game_fly(agent: &mut L2CAgentBase) {
     }
 }
 
-#[smashline::acmd("mario_captoss", ["effect_fly"])]
+#[smashline::acmd("mario_captoss", ["effect_fly","effect_turn","effect_hold"])]
 pub unsafe extern "C" fn effect_fly(agent: &mut L2CAgentBase) {
     let lua_state = agent.lua_state_agent;
     let boma = agent.module_accessor;
-    if is_excute(agent) {
-        macros::LANDING_EFFECT_FLIP(agent, Hash40::new("sys_whirlwind_l"), Hash40::new("sys_whirlwind_r"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false, *EF_FLIP_NONE);
+    for _ in 1..i32::MAX {
+        if is_excute(agent) {
+            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1, 0, 0, -90, 0, 0.5, true, *EF_FLIP_YZ);
+        }
+        wait(agent.lua_state_agent, 5.0);
     }
 }
 #[smashline::acmd("mario_captoss", ["game_turn"])]

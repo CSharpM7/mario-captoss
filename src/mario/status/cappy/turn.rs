@@ -4,18 +4,18 @@ use super::*;
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
 
+    /*
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("accel"));
     let speed = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
     let speed_param = WorkModule::get_float(weapon.module_accessor,*WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLOAT_SPEED);
-    let angle = WorkModule::get_float(weapon.module_accessor,*WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLOAT_ANGLE);
+    let angle = WorkModule::get_float(weapon.module_accessor,*WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLOAT_ANGLE); */
+    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"))*3.5;
+    let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
     let speed_current = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+
     let lr = PostureModule::lr(weapon.module_accessor);
     PostureModule::set_lr(weapon.module_accessor, lr);
-
-    let roty = if lr < 0.0 {0.0} else {180.0};
-    PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:roty,z:0.0}, 0);
-
     println!("TURN: Init (Lr: {lr})");
 
     sv_kinetic_energy!(
@@ -60,7 +60,7 @@ unsafe fn captoss_turn_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         0,
         0,
         0,
-        0,
+        *FS_SUCCEEDS_KEEP_EFFECT,
     );
     0.into()
 }
@@ -82,6 +82,10 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
     if StopModule::is_stop(weapon.module_accessor){
         return 0.into();
     }
+    GroundModule::set_ignore_boss(weapon.module_accessor, true);
+    GroundModule::set_passable_check(weapon.module_accessor, false);
+    GroundModule::set_collidable(weapon.module_accessor, false);
+    JostleModule::set_status(weapon.module_accessor, false);
 
     let correct = GroundModule::get_correct(weapon.module_accessor);
     let has_link = LinkModule::is_link(weapon.module_accessor, *LINK_NO_ARTICLE);
@@ -94,8 +98,12 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
         let dis = sv_math::vec2_distance(parent_pos.x,parent_pos.y,pos_x,pos_y);
         let min_dis = if !reflect {13.0} else {11.0};
 
+        let owner = get_owner_boma(weapon);
+        let owner_status = StatusModule::status_kind(owner);
+
         //println!("Distance: {dis} / {min_dis}");
-        if dis <= min_dis {
+        if dis <= min_dis 
+        && ![FIGHTER_MARIO_STATUS_KIND_CAPJUMP].contains(&owner_status) {
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             return 0.into();
         }
@@ -112,12 +120,33 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    if captoss_delete_if_orphaned(weapon) {
+        return 0.into();
+    }
+
     let sum_speed_len = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
-    let speed_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_mul"));
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("accel"));
-    let speed_min_mul = speed_min*1.0;
+
+    let owner = get_owner_boma(weapon);
+    let owner_pos = *PostureModule::pos(owner);
+    let pos = *PostureModule::pos(weapon.module_accessor);
+
+    let mut direction_full = Vector2f{x:owner_pos.x-pos.x, y: owner_pos.y-pos.y};
+    let direction = sv_math::vec2_normalize(direction_full.x,direction_full.y);
+
+    let speed_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    let speed_y= KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    let normal_speed = sv_math::vec2_normalize(speed_x,speed_y);
+
+    //let mut rotateAmount = sv_math::vec3_cross(direction.x, direction.y, 0.0, normal_speed.x,normal_speed.y, 0.0);
+    let mut rotateAmount = 0.2;
+    let vec_lerp = Vector2f{x: lerp(normal_speed.x,direction.x,0.2), y: lerp(normal_speed.y,direction.y, rotateAmount)};
+
+    let new_speed_len = sum_speed_len.max(speed_max);
+    let new_speed = Vector2f{x:vec_lerp.x*new_speed_len, y: vec_lerp.y*new_speed_len};
+    println!("Speed: {},{} Dir: {},{}",new_speed.x,new_speed.y,direction.x,direction.y);
+
+    SET_SPEED_EX(weapon,new_speed.x,new_speed.y, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     
     let current_follow_dist = WorkModule::get_float(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLOAT_TURN_DIST);
     let turn_follow_dist = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("turn_follow_dist"));
@@ -129,6 +158,8 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     }
     0.into()
 }
+
+
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {

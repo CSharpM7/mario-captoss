@@ -17,6 +17,7 @@ pub fn install() {
 
 
 unsafe extern "C" fn captoss_ground_check(weapon: &mut smashline::L2CWeaponCommon) -> bool{
+
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_ALL as u32)
     {
         println!("Touched!");

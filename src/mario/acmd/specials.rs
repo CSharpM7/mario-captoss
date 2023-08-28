@@ -5,13 +5,33 @@ unsafe fn game_mario_specials(agent: &mut smashline::L2CAgentBase) {
     frame(agent.lua_state_agent, 6.0);
     if macros::is_excute(agent) {
         println!("Spawn boomerang");
+        println!("Charge: {} Prev {} NUM {}",*FIGHTER_MARIO_STATUS_KIND_SPECIAL_LW_CHARGE,*FIGHTER_MARIO_STATUS_KIND_PREV,*FIGHTER_MARIO_STATUS_KIND_NUM);
         ArticleModule::generate_article(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS, false, -1);
         notify_event_msc_cmd!(agent, Hash40::new_raw(0x2127e37c07), *GROUND_CLIFF_CHECK_KIND_ALWAYS);
     }
+    frame(agent.lua_state_agent, 7.0);
+    if macros::is_excute(agent) {
+        if ArticleModule::is_exist(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) 
+        && crate::mario::HAVE {
+            println!("Have boomerang");
+            let cappy = get_article_boma(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS);
+            StatusModule::change_status_force(cappy, CAPTOSS_STATUS_KIND_HAVED, false);
+        }
+    }
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
-        println!("Shoot boomerang");
-        ArticleModule::shoot(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS, ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL), false);
+        if ArticleModule::is_exist(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) 
+        && crate::mario::FORCE_FLY {
+            println!("Shoot boomerang");
+            let cappy = get_article_boma(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS);
+            StatusModule::change_status_force(cappy, CAPTOSS_STATUS_KIND_FLY, false);
+            //let c_status = StatusModule::status_kind(boma);
+            //let c_motion = MotionModule::motion_kind(boma);
+            //println!("Cappy Status: {c_status} Cappy Motion: {c_motion}");
+        }
+        if crate::mario::SHOOT {
+            ArticleModule::shoot_exist(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS, ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL), false);
+        }
     }
     /* 
     frame(agent.lua_state_agent, 6.0);

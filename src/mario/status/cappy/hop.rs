@@ -48,7 +48,7 @@ unsafe fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
         *FIGHTER_STATUS_WORK_KEEP_FLAG_ALL_FLAG,
         *FIGHTER_STATUS_WORK_KEEP_FLAG_ALL_INT,
         *FIGHTER_STATUS_WORK_KEEP_FLAG_ALL_FLOAT,
-        *FS_SUCCEEDS_KEEP_ROT_Y_LR,
+        *FS_SUCCEEDS_KEEP_ROT_Y_LR | *FS_SUCCEEDS_KEEP_EFFECT,
     );
     0.into()
 }

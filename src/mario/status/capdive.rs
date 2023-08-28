@@ -1,8 +1,8 @@
 use crate::imports::imports_agent::*;
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
-    println!("Capjump!");
+#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
+unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+    println!("CAPDIVE!");
     StatusModule::init_settings(
         fighter.module_accessor,
         app::SituationKind(*SITUATION_KIND_AIR),
@@ -32,14 +32,14 @@ unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
-    println!("Capjump!");
+#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
+unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
+    println!("CAPDIVE!");
     MotionModule::change_motion(fighter.module_accessor, Hash40::new("jump_aerial_f"), 0.0, 1.0, false, 0.0, false, false);
-    fighter.sub_shift_status_main(L2CValue::Ptr(capjump_main_status_loop as *const () as _))
+    fighter.sub_shift_status_main(L2CValue::Ptr(capdive_main_status_loop as *const () as _))
 }
 
-unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+unsafe extern "C" fn capdive_main_status_loop(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     if fighter.sub_transition_group_check_air_cliff().get_bool() {
         return 1.into();
     }
@@ -64,13 +64,13 @@ unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighte
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
+unsafe fn capdive_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     0.into()
 }
 
 pub fn install() {    
-    capjump_pre::install();
-    capjump_main::install();
-    capjump_end::install();
+    capdive_pre::install();
+    capdive_main::install();
+    capdive_end::install();
 }
