@@ -102,8 +102,9 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
         let owner_status = StatusModule::status_kind(owner);
 
         //println!("Distance: {dis} / {min_dis}");
-        if dis <= min_dis 
-        && ![FIGHTER_MARIO_STATUS_KIND_CAPJUMP].contains(&owner_status) {
+        if dis <= min_dis-4.0
+        //&& ![FIGHTER_MARIO_STATUS_KIND_CAPJUMP].contains(&owner_status) 
+        {
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             return 0.into();
         }
@@ -123,16 +124,49 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
+    KineticModule::clear_speed_all(weapon.module_accessor);
 
     let sum_speed_len = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
+    let turn_speed = 1.5;
 
     let owner = get_owner_boma(weapon);
     let owner_pos = *PostureModule::pos(owner);
+    let owner_offset_y = WorkModule::get_param_float(owner, hash40("height"), 0) / 2.0;
+
     let pos = *PostureModule::pos(weapon.module_accessor);
+    let offset_y = 1.25;
+
+    let mut direction_full = Vector2f{x:owner_pos.x-pos.x, y: (owner_pos.y+owner_offset_y)-(pos.y+offset_y)};
+    let direction_len = sv_math::vec2_length(direction_full.x,direction_full.y);
+    let direction = Vector2f{x:direction_full.x/direction_len,y:direction_full.y/direction_len};
+    //let direction = sv_math::vec2_normalize(direction_full.x,direction_full.y);
+
+    let new_speed_len = 3.0;//sum_speed_len.abs();
+    let new_speed_x = direction.x*new_speed_len;
+    let new_speed_y = direction.y*new_speed_len;
+
+    PostureModule::set_lr(weapon.module_accessor, direction_full.x.signum());
+    let lr = PostureModule::lr(weapon.module_accessor);
+
+    let mut lr_fix = 1.0;
+    if owner_pos.x > pos.x && lr > 0.0 {
+        lr_fix = -1.0;
+    }
+    else if owner_pos.x < pos.x && lr < 0.0 {
+        lr_fix = -1.0;
+    }
+    //SET_SPEED_EX(weapon,new_speed_x,new_speed_y, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:new_speed_x,y:new_speed_y,z:0.0});
+    //WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL
+    
+
+    println!("Dir: {}/{}, Speed: {}/{}",direction.x,direction.y,new_speed_x*lr_fix,new_speed_y);
+    /* 
 
     let mut direction_full = Vector2f{x:owner_pos.x-pos.x, y: owner_pos.y-pos.y};
     let direction = sv_math::vec2_normalize(direction_full.x,direction_full.y);
+    println!("Pos: {},{} Owner: {}, Dir: {},{}",pos.x,pos.y,owner_pos.x,owner_pos.y,direction.x,direction.y);
 
     let speed_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_y= KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
@@ -144,7 +178,7 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
 
     let new_speed_len = sum_speed_len.max(speed_max);
     let new_speed = Vector2f{x:vec_lerp.x*new_speed_len, y: vec_lerp.y*new_speed_len};
-    println!("Speed: {},{} Dir: {},{}",new_speed.x,new_speed.y,direction.x,direction.y);
+    //println!("Speed: {},{} Dir: {},{}",new_speed.x,new_speed.y,direction.x,direction.y);
 
     SET_SPEED_EX(weapon,new_speed.x,new_speed.y, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     
@@ -155,7 +189,7 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     }
     if WorkModule::get_int(weapon.module_accessor, *WN_LINK_BOOMERANG_TURN_WORK_INT_BACK_ROT_FRAME) < 0 {
         //bruh idk
-    }
+    }*/
     0.into()
 }
 
