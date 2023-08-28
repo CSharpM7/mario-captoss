@@ -5,11 +5,10 @@ use super::*;
 unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     println!("HOLD: Init");
 
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("accel"));
-    let speed = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed"));
+    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
-    let speed_current = 0.0; //KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let brake = accel/2.0;
+    let speed_current = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    let brake = accel;
     let lr = PostureModule::lr(weapon.module_accessor);
     sv_kinetic_energy!(
         set_speed,
@@ -18,40 +17,12 @@ unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         speed_current
     );
     sv_kinetic_energy!(
-        set_limit_speed,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_min*lr
-    );
-    sv_kinetic_energy!(
         set_accel,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        0.0//-accel
+        -accel
     );
-    sv_kinetic_energy!(
-        set_brake, 
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL, 
-        brake, 
-        0.0
-    );
-    sv_kinetic_energy!(
-        set_stable_speed,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        0.0
-    );
-    /* 
-    let speed_rot = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("rot_speed"));
-    sv_kinetic_energy!(
-        set_speed,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL,
-        speed_rot*lr
-    );*/
-
-    WorkModule::set_int(weapon.module_accessor, 180, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    WorkModule::set_int(weapon.module_accessor, 180, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
@@ -89,15 +60,21 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
     if sum_speed_len < 0.1 {
         KineticModule::clear_speed_all(weapon.module_accessor);
     }
-
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
     let owner_boma = get_owner_boma(weapon);
-    if ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL)
-    && ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL_RAW){
-        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-        return 0.into()
+    
+    let hold_frame_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity_start_frame_min")) as i32;
+    let hold_frame_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity_start_frame_max")) as i32;
+    let hold_frame_current = WorkModule::get_int(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+
+    if hold_frame_current < hold_frame_max-hold_frame_min {
+        if ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL)
+        && ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL_RAW){
+            StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+            return 0.into()
+        }
     }
     if captoss_distance_to_owner(weapon) < 12.0 {
         PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
@@ -109,8 +86,8 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
         //StatusModule::change_status_request_from_script(owner_boma, *FIGHTER_STATUS_KIND_JUMP_AERIAL, true);
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
     }
-    WorkModule::dec_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
-    if (WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE) <= 0){
+    WorkModule::dec_int(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+    if (hold_frame_current <= 0) {
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
     }
     0.into()

@@ -14,13 +14,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:0.0,z:0.0}, 0);
 
     println!("FLY: Init (Lr: {lr})");
-
-    /* 
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("accel"));
-    let speed = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed"));
-    let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
-    */
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"))*3.5;
+    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
 
     sv_kinetic_energy!(
@@ -39,7 +33,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         set_accel,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        -0.047*lr
+        -accel*lr
     );
     /*
     let speed_rot = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("rot_speed"));
@@ -77,7 +71,7 @@ unsafe fn captoss_fly_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue 
     println!("FLY: MAIN");
     KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_NORMAL);
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
-    WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_TO_HOP);
+    WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     if StopModule::is_stop(weapon.module_accessor){
         captoss_ground_check(weapon);
     }
@@ -97,13 +91,13 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     let speed_min_mul = speed_min*1.0;
     //println!("FLY Speed: {sum_speed_len} / {speed_min}");
 
-    if WorkModule::is_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_TO_HOP)
+    if WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP)
     {
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
         return 0.into();
     }
     if sum_speed_len <= speed_min_mul {
-        if WorkModule::is_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_APPLY_FLY_SPEED) {
+        if WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_ATTACK) {
             println!("Turn?!?");
             //weapon.change_status(CAPTOSS_STATUS_KIND_HOP.into(),false.into());
             StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);
@@ -111,8 +105,9 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
         }
     }
     else{
-        WorkModule::on_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_APPLY_FLY_SPEED);
+        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_ATTACK);
     }
+    /* 
     if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_HIT){
         WorkModule::on_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
     }
@@ -125,6 +120,12 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
                 //return 0.into();
             }
         }
+    }*/
+    if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
+        println!("REFLECTED?!?");
+        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+        return 0.into();
     }
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();

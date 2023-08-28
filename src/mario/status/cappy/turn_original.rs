@@ -137,7 +137,7 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
     let speed_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_mul"));
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("accel"));
+    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_min_mul = speed_min*1.0;
     
     let current_follow_dist = WorkModule::get_float(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLOAT_TURN_DIST);

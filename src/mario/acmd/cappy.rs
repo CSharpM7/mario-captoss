@@ -20,7 +20,7 @@ pub unsafe extern "C" fn effect_fly(agent: &mut L2CAgentBase) {
     let boma = agent.module_accessor;
     for _ in 1..i32::MAX {
         if is_excute(agent) {
-            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1, 0, 0, -90, 0, 0.5, true, *EF_FLIP_YZ);
+            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
         }
         wait(agent.lua_state_agent, 5.0);
     }

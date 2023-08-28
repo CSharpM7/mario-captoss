@@ -4,7 +4,7 @@ use super::*;
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
 unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     
-    let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("hop_life"));
+    let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     let speed_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_x"));
     let speed_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_y"));
     let speed_y_limit = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_limit_speed_y"));
@@ -32,7 +32,7 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         0.0
     );
     let rot_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_rot_mul"));
-    KineticModule::mul_accel(weapon.module_accessor, &Vector3f {x: rot_mul, y: rot_mul, z: rot_mul }, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
+    //KineticModule::mul_accel(weapon.module_accessor, &Vector3f {x: rot_mul, y: rot_mul, z: rot_mul }, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
     EffectModule::detach_all(weapon.module_accessor, 5);
     0.into()
 }
