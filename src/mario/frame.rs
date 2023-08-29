@@ -8,6 +8,9 @@ unsafe fn mario_update(fighter: &mut L2CFighterCommon) {
     barrel_timer(fighter,boma,status_kind);
     barrel_air_despawn(fighter,boma,status_kind,motion_kind);
     */
+    if [hash40("appeal_s_r"), hash40("appeal_s_l")].contains(&motion_kind){
+        return;
+    }
     if ArticleModule::is_exist(boma, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
         ArticleModule::remove_exist(boma, *FIGHTER_MARIO_GENERATE_ARTICLE_CAPPY, ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL));
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), false);

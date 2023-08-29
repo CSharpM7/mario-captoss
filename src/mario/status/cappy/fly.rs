@@ -4,7 +4,10 @@ pub const NEXT_STATUS: i32 = CAPTOSS_STATUS_KIND_HOLD;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
 unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    let founder = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
+    if !captoss_owner_is_mario(weapon) {
+        println!("Isabelle fly?");
+        return 0.into();
+    }
     let owner_boma = get_owner_boma(weapon);
     let lr = PostureModule::lr(owner_boma);
     PostureModule::set_lr(weapon.module_accessor, lr);
@@ -86,6 +89,9 @@ unsafe extern "C" fn captoss_fly_main_substatus(weapon: &mut L2CWeaponCommon, pa
 }
 
 unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    if !captoss_owner_is_mario(weapon) {
+        return 0.into();
+    }
     let sum_speed_len = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN).abs();
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
     let speed_min_mul = speed_min*1.0;

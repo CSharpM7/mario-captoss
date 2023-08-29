@@ -75,19 +75,8 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         return 0.into();
     }
     
-    let pos = PostureModule::pos(weapon.module_accessor);
-    EffectModule::req(
-        weapon.module_accessor,
-        Hash40::new("sys_erace_smoke"),
-        pos,
-        &Vector3f{x:0.0,y:0.0,z:0.0},
-        1.0,
-        0,
-        -1,
-        false,
-        0
-    );
     smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+    captoss_effect_disappear(weapon);
     0.into()
 }
 

@@ -1,4 +1,33 @@
 {
+    "share-to-added": {
+        "fighter/mario/model/body/c00/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c00/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c00/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_prm.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_col.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_col.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_nor.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_prm.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_col.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_col.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_nor.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_prm.nutexb"
+        ]
+    },
     "new-dir-files": {
         "fighter/mario/c00": [
             "fighter/mario/model/captoss/c00/dark_model.numatb",
@@ -12,16 +41,6 @@
             "fighter/mario/model/captoss/c00/model.nusktb",
             "fighter/mario/model/captoss/c00/model.nusrcmdlb",
             "fighter/mario/model/captoss/c00/model.xmb",
-
-            "fighter/mario/model/captoss/c00/def_cappy_001_nor.nutexb",
-            "fighter/mario/model/captoss/c00/def_cappy_001_prm.nutexb",
-            "fighter/mario/model/captoss/c00/def_mario_001_col.nutexb",
-            "fighter/mario/model/captoss/c00/def_mario_001_nor.nutexb",
-            "fighter/mario/model/captoss/c00/def_mario_001_prm.nutexb",
-            "fighter/mario/model/captoss/c00/eye_cappy_b_col.nutexb",
-            "fighter/mario/model/captoss/c00/eye_cappy_b_nor.nutexb",
-            "fighter/mario/model/captoss/c00/eye_cappy_b_prm.nutexb",
-            "fighter/mario/model/captoss/c00/def_cappy_001_col.nutexb",
             
             "fighter/mario/motion/captoss/c00/captoss.nuanmb",
             "fighter/mario/motion/captoss/c00/motion_list.bin",

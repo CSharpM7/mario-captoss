@@ -3,6 +3,10 @@ use super::*;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    if !captoss_owner_is_mario(weapon) {
+        println!("Isabelle turn?");
+        return 0.into();
+    }
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
 
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
@@ -103,6 +107,9 @@ unsafe fn captoss_turn_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue
 }
 
 unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    if !captoss_owner_is_mario(weapon) {
+        return 0.into();
+    }
     if StopModule::is_stop(weapon.module_accessor){
         return 0.into();
     }
@@ -111,6 +118,7 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
     GroundModule::set_collidable(weapon.module_accessor, false);
     JostleModule::set_status(weapon.module_accessor, false);
 
+    /* 
     let correct = GroundModule::get_correct(weapon.module_accessor);
     let has_link = LinkModule::is_link(weapon.module_accessor, *LINK_NO_ARTICLE);
     if has_link {
@@ -130,12 +138,13 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
         //&& ![FIGHTER_MARIO_STATUS_KIND_CAPJUMP].contains(&owner_status) 
         {
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+            captoss_effect_reappear(weapon);
             return 0.into();
         }
     }
     else{
         //println!("Lmao no link");
-    }
+    }*/
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
@@ -157,6 +166,7 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         return 0.into();
     }
     KineticModule::clear_speed_all(weapon.module_accessor);
+    captoss_check_recapture(weapon);
 
     let turn_speed = 1.5;
 

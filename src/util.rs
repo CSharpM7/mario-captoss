@@ -2,7 +2,7 @@ use crate::imports::imports_agent::*;
 pub const SUB_STATUS3:                     i32 = 0x13;
 pub const SUB_STATUS2:                     i32 = 0x14;
 pub const SUB_STATUS:                      i32 = 0x15;
-pub const VECTOR3_ZERO : Vector3f = Vector3f { x: 0.0, y: 0.0, z: 0.0 };
+pub const VECTOR_ZERO : Vector3f = Vector3f { x: 0.0, y: 0.0, z: 0.0 };
 
 extern "C"{
     /// gets whether we are in training mode

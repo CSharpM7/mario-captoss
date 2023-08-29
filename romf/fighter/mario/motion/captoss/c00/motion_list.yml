@@ -43,6 +43,28 @@ list:
       - sound_fly
       - effect_fly
     extra: ~
+  hold:
+    game_script: game_hold
+    flags:
+      turn: false
+      loop: true
+      move: false
+      fix_trans: false
+      fix_rot: false
+      fix_scale: false
+      unk_40: false
+      unk_80: false
+      unk_100: false
+      unk_200: false
+      unk_400: false
+    blend_frames: 0
+    animations:
+      - name: captoss.nuanmb
+        unk: 0
+    scripts:
+      - sound_hold
+      - effect_hold
+    extra: ~
   turn:
     game_script: game_turn
     flags:

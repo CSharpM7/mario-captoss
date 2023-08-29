@@ -23,9 +23,8 @@ pub mod imports_acmd {
         },
         smashline::*,
         crate::vars::*,
-        crate::util::*,
-        //crate::data::gamemode::*,
-        /* 
+        //crate::util::*,
+        //crate::data::gamemode::*, 
         sharpsmashlinesuite::{
             *,
             util::{
@@ -34,7 +33,7 @@ pub mod imports_acmd {
             },
             ext::*,
             getvar::*
-        },*/
+        },
     };
 }
 
@@ -61,9 +60,8 @@ pub mod imports_agent {
         },
         smashline::*,
         crate::vars::*,
-        crate::util::*,
+        //crate::util::*,
         //crate::data::gamemode::*,
-        /* 
         sharpsmashlinesuite::{
             *,
             util::{
@@ -72,6 +70,6 @@ pub mod imports_agent {
             },
             ext::*,
             getvar::*
-        },*/
+        },
     };
 }

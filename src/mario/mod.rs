@@ -10,7 +10,7 @@ pub const SHOOT: bool = false;
 pub fn install() {
     acmd::install();
     status::install();
-    //agent::install();
+    agent::install();
     frame::install();
 
     //smashline::clone_weapon("link", "boomerang", "mario", "captoss",false);
