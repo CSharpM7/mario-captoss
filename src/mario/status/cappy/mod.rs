@@ -20,7 +20,6 @@ unsafe extern "C" fn captoss_ground_check(weapon: &mut smashline::L2CWeaponCommo
 
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_ALL as u32)
     {
-        println!("Touched!");
         weapon.clear_lua_stack();
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x18b78d41a0));
         return true;
@@ -86,9 +85,9 @@ unsafe extern "C" fn captoss_owner_is_mario(weapon: &mut smashline::L2CWeaponCom
 }
 unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCommon) -> bool {
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
-    let min_dis = if !is_reflected {10.0} else {8.0};
+    let min_dis = if !is_reflected {11.0} else {9.0};
     let cap_status = StatusModule::status_kind(weapon.module_accessor);
-    let turn_add = if cap_status == CAPTOSS_STATUS_KIND_TURN {1.0} else {0.0};
+    let turn_add = if cap_status == CAPTOSS_STATUS_KIND_TURN {2.0} else {0.0};
 
     if captoss_distance_to_owner(weapon) < min_dis+turn_add {
         let owner_boma = get_owner_boma(weapon);
@@ -112,9 +111,13 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
             //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
             StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
-            StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-            WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
-            KineticModule::clear_speed_all(weapon.module_accessor);
+
+            if cap_status != CAPTOSS_STATUS_KIND_TURN{
+                StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+                WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+                KineticModule::clear_speed_all(weapon.module_accessor);
+            }
+
             return true;
         }
         else {

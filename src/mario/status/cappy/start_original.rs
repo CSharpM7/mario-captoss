@@ -2,7 +2,6 @@ use crate::imports::imports_acmd::*;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("Start: PRE");
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -28,7 +27,6 @@ unsafe extern "C" fn captoss_start_main_status_loop(weapon: &mut smashline::L2CW
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("Start: END");
     0.into()
 }
 

@@ -3,7 +3,6 @@ use super::*;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("TURN: Init");
     let founder = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
     let owner_boma = get_owner_boma(weapon);
 
@@ -46,7 +45,6 @@ unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("TURN: PRE");
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -64,7 +62,6 @@ unsafe fn captoss_turn_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("TURN: MAIN");
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_TO_HOP);
     if StopModule::is_stop(weapon.module_accessor){
@@ -91,7 +88,6 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
             let teamowner = TeamModule::team_owner_id(weapon.module_accessor);
             if teamowner == parent
             {
-                println!("Has parent");
                 let parent_pos = get_linked_parent_pos(weapon);
                 let pos_x = PostureModule::pos_x(weapon.module_accessor);
                 let pos_y = PostureModule::pos_y(weapon.module_accessor);

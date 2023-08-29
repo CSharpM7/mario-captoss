@@ -34,7 +34,7 @@ unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
 #[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
 unsafe fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     println!("Capjump!");
-    MotionModule::change_motion(fighter.module_accessor, Hash40::new("jump_aerial_f"), 0.0, 1.0, false, 0.0, false, false);
+    MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_air_s_jump"), 0.0, 1.0, false, 0.0, false, false);
     let accel = 0.18;
     let distance = 1.1;
     //let jump_speed = KineticUtility::get_jump_speed_y(distance, accel);
@@ -152,7 +152,7 @@ unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighte
         fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), false.into());
     }
     else if MotionModule::frame(fighter.module_accessor) > 10.0 {
-        CancelModule::enable_cancel(fighter.module_accessor);
+        //CancelModule::enable_cancel(fighter.module_accessor);
     }
     if CancelModule::is_enable_cancel(fighter.module_accessor)
     && fighter.sub_wait_ground_check_common(false.into()).get_bool() == false

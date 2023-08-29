@@ -7,7 +7,6 @@ unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         println!("Isabelle hold?");
         return 0.into();
     }
-    println!("HOLD: Init");
 
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
@@ -26,12 +25,13 @@ unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
         -accel
     );
-    WorkModule::set_int(weapon.module_accessor, 180, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+    let hold_frame_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity_start_frame_max")) as i32;
+    WorkModule::set_int(weapon.module_accessor, hold_frame_max, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
 unsafe fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("HOLD: PRE");
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -49,7 +49,6 @@ unsafe fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
 unsafe fn captoss_hold_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("HOLD: MAIN");
     if StopModule::is_stop(weapon.module_accessor){
         //captoss_ground_check(weapon);
     }
@@ -64,7 +63,7 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
         return 0.into();
     }
     let sum_speed_len = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    if sum_speed_len < 0.1 {
+    if sum_speed_len < 0.2 {
         KineticModule::clear_speed_all(weapon.module_accessor);
     }
     if captoss_delete_if_orphaned(weapon) {

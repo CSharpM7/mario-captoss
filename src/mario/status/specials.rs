@@ -4,7 +4,6 @@ use crate::imports::imports_agent::*;
 #[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
 unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
     if ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
-        println!("New status!");
         //StatusModule::set_status_kind_interrupt(fighter.module_accessor,*FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE);
         StatusModule::change_status_force(fighter.module_accessor, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPDIVE, false);
     }

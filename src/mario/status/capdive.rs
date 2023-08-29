@@ -33,7 +33,10 @@ unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
 #[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
 unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     println!("Capdive!");
-    MotionModule::change_motion(fighter.module_accessor, Hash40::new("escape_air"), 0.0, 1.0, false, 0.0, false, false);
+    let motion_g = Hash40::new("special_s_dash");
+    let motion_a = Hash40::new("special_air_s_dash");
+    let motion = if fighter.is_situation(*SITUATION_KIND_GROUND) {motion_g} else {motion_a};
+    MotionModule::change_motion(fighter.module_accessor, motion, 0.0, 1.0, false, 0.0, false, false);
     PostureModule::set_stick_lr(fighter.module_accessor, 0.0);
     PostureModule::update_rot_y_lr(fighter.module_accessor);
 

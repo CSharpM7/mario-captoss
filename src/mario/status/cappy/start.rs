@@ -3,13 +3,11 @@ use super::*;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("Start: INIT");
     captoss_start_snap(weapon);
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("Start: PRE");
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -51,12 +49,10 @@ unsafe fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashli
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("Start: END");
     0.into()
 }
 unsafe extern "C" fn captoss_start_snap(weapon: &mut smashline::L2CWeaponCommon) {
     if !captoss_owner_is_mario(weapon) {
-        println!("Isabelle Start?");
         return;
     }
     let owner = get_owner_boma(weapon);

@@ -4,7 +4,6 @@ use super::*;
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     if !captoss_owner_is_mario(weapon) {
-        println!("Isabelle turn?");
         return 0.into();
     }
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
@@ -77,7 +76,6 @@ unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    println!("TURN: PRE");
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -95,7 +93,6 @@ unsafe fn captoss_turn_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("TURN: MAIN");
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_TO_HOP);
     if StopModule::is_stop(weapon.module_accessor){
@@ -118,33 +115,6 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
     GroundModule::set_collidable(weapon.module_accessor, false);
     JostleModule::set_status(weapon.module_accessor, false);
 
-    /* 
-    let correct = GroundModule::get_correct(weapon.module_accessor);
-    let has_link = LinkModule::is_link(weapon.module_accessor, *LINK_NO_ARTICLE);
-    if has_link {
-        let parent = LinkModule::get_parent_id(weapon.module_accessor, *LINK_NO_ARTICLE,true);
-        let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
-        let parent_pos = get_parent_pos(weapon);
-        let pos_x = PostureModule::pos_x(weapon.module_accessor);
-        let pos_y = PostureModule::pos_y(weapon.module_accessor);
-        let dis = sv_math::vec2_distance(parent_pos.x,parent_pos.y,pos_x,pos_y);
-        let min_dis = if !is_reflected {13.0} else {11.0};
-
-        let owner = get_owner_boma(weapon);
-        let owner_status = StatusModule::status_kind(owner);
-
-        //println!("Distance: {dis} / {min_dis}");
-        if dis <= min_dis-4.0
-        //&& ![FIGHTER_MARIO_STATUS_KIND_CAPJUMP].contains(&owner_status) 
-        {
-            smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-            captoss_effect_reappear(weapon);
-            return 0.into();
-        }
-    }
-    else{
-        //println!("Lmao no link");
-    }*/
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }

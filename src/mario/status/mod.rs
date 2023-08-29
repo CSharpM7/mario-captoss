@@ -3,6 +3,7 @@ mod capjump;
 mod capdive;
 mod specials;
 mod appeal;
+mod wait;
 
 pub fn install() {
     cappy::install();
@@ -10,4 +11,5 @@ pub fn install() {
     capdive::install();
     specials::install();
     appeal::install();
+    wait::install();
 }

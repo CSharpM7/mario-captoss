@@ -15,10 +15,6 @@ unsafe fn mario_update(fighter: &mut L2CFighterCommon) {
         ArticleModule::remove_exist(boma, *FIGHTER_MARIO_GENERATE_ARTICLE_CAPPY, ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL));
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), false);
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), true);
-        //let cappy = get_article_boma(boma, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS);
-        //let c_status = StatusModule::status_kind(boma);
-        //let c_motion = MotionModule::motion_kind(boma);
-        //println!("Cappy Status: {c_status} Cappy Motion: {c_motion}");
     }
     else{
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), true);
