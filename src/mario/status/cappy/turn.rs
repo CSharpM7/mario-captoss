@@ -6,71 +6,24 @@ unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     if !captoss_owner_is_mario(weapon) {
         return 0.into();
     }
+    let speed_current = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    WorkModule::set_float(weapon.module_accessor, speed_current,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
-
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
-    let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
-    let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
-    let speed_current = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let brake = accel;
-    let lr = PostureModule::lr(weapon.module_accessor);
-
     if !is_reflected {
-        sv_kinetic_energy!(
-            set_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            speed_current
-        );
-        sv_kinetic_energy!(
-            set_limit_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            speed_min*lr
-        );
-        sv_kinetic_energy!(
-            set_accel,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            0.0//-accel
-        );
-        sv_kinetic_energy!(
-            set_brake, 
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL, 
-            brake, 
-            0.0
-        );
-        sv_kinetic_energy!(
-            set_stable_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            0.0
-        );
+        return 0.into();
     }
     else{
-
-        sv_kinetic_energy!(
-            set_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            speed_current*-lr
-        );
+        KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         sv_kinetic_energy!(
             set_limit_speed,
             weapon,
             WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            speed_max
+            99,
+            99
         );
-        sv_kinetic_energy!(
-            set_accel,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            -accel*lr
-        );
+        return 0.into();
     }
 
-    WorkModule::set_float(weapon.module_accessor, speed_current,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
     0.into()
 }
 
@@ -127,9 +80,30 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
+    let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+    let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    if speed_current_x.abs() < 0.1 && !is_reflected {
+        sv_kinetic_energy!(
+            set_speed,
+            weapon,
+            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+            0,
+            speed_current_y
+        );
+    }
+    if speed_current_y.abs() < 0.1 && !is_reflected {
+        sv_kinetic_energy!(
+            set_speed,
+            weapon,
+            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+            speed_current_x,
+            0
+        );
+    }
+
     let kinetic_speed = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
-    let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
     if (kinetic_speed > 0.1 && !is_reflected)
     || (kinetic_speed >= speed_max-0.1 && is_reflected) {
         WorkModule::set_float(weapon.module_accessor, kinetic_speed,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);

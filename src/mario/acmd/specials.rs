@@ -46,6 +46,22 @@ unsafe fn game_mario_specials(agent: &mut smashline::L2CAgentBase) {
     }
 }
 
+
+#[smashline::acmd("mario", ["effect_specials","effect_specialairs"])]
+unsafe fn effect_mario_specials(agent: &mut smashline::L2CAgentBase) {
+    frame(agent.lua_state_agent, 12.0);
+    if macros::is_excute(agent) {
+        //macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("mario_supermant_wind_r"), Hash40::new("mario_supermant_wind_l"), Hash40::new("top"), 2.5, 5, 9.5, 0, 0, 0, 1, true, *EF_FLIP_NONE);
+        macros::EFFECT(agent, Hash40::new("mario_supermant_flash"), Hash40::new("top"), 0, 5.5, 9, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
+    }
+    frame(agent.lua_state_agent, 13.0);
+    if macros::is_excute(agent) {
+        if StatusModule::situation_kind(agent.module_accessor) == *SITUATION_KIND_GROUND {
+            macros::FOOT_EFFECT(agent, Hash40::new("sys_action_smoke_h"), Hash40::new("top"), -4, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
+        }
+    }
+}
+
 pub fn install() {    
     game_mario_specials::install();
 }

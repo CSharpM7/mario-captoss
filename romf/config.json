@@ -143,6 +143,10 @@
     },
     "new-dir-files": {
         "fighter/mario/c00": [
+            "fighter/mario/motion/body/c00/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c00/dark_model.numatb",
             "fighter/mario/model/captoss/c00/light_model.numatb",
             "fighter/mario/model/captoss/c00/metamon_model.numatb",

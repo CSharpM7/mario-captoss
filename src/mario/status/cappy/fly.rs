@@ -8,9 +8,11 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         println!("Isabelle fly?");
         return 0.into();
     }
+
     let owner_boma = get_owner_boma(weapon);
     let stick_y = ControlModule::get_stick_y(owner_boma);
     let stick_y_mul = if stick_y.abs() < 0.2 {0.0} else {WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity"))};
+    let angle = (stick_y*(std::f32::consts::PI/2.0))*stick_y_mul;
 
     let lr = PostureModule::lr(owner_boma);
     PostureModule::set_lr(weapon.module_accessor, lr);
@@ -22,39 +24,36 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
 
-    let y_speed = if stick_y.abs() < 0.2 {0.0} else {speed_max*stick_y*stick_y_mul};
+    let speed_x = speed_max*angle.cos()*lr;
+    let speed_y = speed_max*angle.sin();
+    println!("SpeedX: {speed_x} SpeedY: {speed_y}");
     sv_kinetic_energy!(
         set_speed,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_max*lr,
-        y_speed
+        speed_x,
+        speed_y
     );
-    let y_max = if stick_y.abs() < 0.2 {0.0} else {speed_max*stick_y_mul};
+    let max_x = speed_max*angle.cos();
+    let max_y = speed_max*angle.sin();
+    println!("MaxX: {max_x} MaxY: {max_y}");
     sv_kinetic_energy!(
         set_limit_speed,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_max,
-        y_max
+        max_x,
+        max_y
     );
-    let y_accel = if stick_y.abs() < 0.2 {0.0} else {-accel*stick_y.signum()*stick_y_mul};
-    println!("FLY: Init (YSpeed: {y_speed} YMax: {y_max} Y_Accel: {y_accel})");
+    let accel_x = -accel*lr*angle.cos();
+    let accel_y = -accel*angle.sin();
+    println!("Accelx: {accel_x} AccelY: {accel_y}");
     sv_kinetic_energy!(
         set_accel,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        -accel*lr,
-        y_accel
+        accel_x,
+        accel_y
     );
-    /*
-    let speed_rot = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("rot_speed"));
-    sv_kinetic_energy!(
-        set_speed,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL,
-        speed_rot*lr
-    ); */
 
     KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL);
     0.into()
@@ -65,7 +64,8 @@ unsafe fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
     StatusModule::init_settings(
         weapon.module_accessor,
         SituationKind(*SITUATION_KIND_AIR),
-        *WEAPON_KINETIC_TYPE_NORMAL,
+        //*WEAPON_KINETIC_TYPE_NORMAL,
+        *WEAPON_KINETIC_TYPE_NONE,
         *GROUND_CORRECT_KIND_AIR as u32,
         smashline::skyline_smash::app::GroundCliffCheckKind(0),
         false,
@@ -150,10 +150,12 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     }
     else if GroundModule::is_touch(weapon.module_accessor, (*GROUND_TOUCH_FLAG_UP | *GROUND_TOUCH_FLAG_DOWN) as u32)
     {
+        LANDING_EFFECT(weapon, Hash40::new("sys_landing_smoke_s"), Hash40::new("top"), 0, -2, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
         let bound_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("floor_bound_x_mul"));
-        KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 0.5, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 0.5, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::mul_speed(weapon.module_accessor, &Vector3f{x: 1.0, y: bound_mul, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        //KineticModule::mul_speed(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        //KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
     }
 
     0.into()
