@@ -2597,7 +2597,7 @@ list:
     game_script: game_specialsdash
     flags:
       turn: false
-      loop: true
+      loop: false
       move: true
       fix_trans: false
       fix_rot: false
@@ -2627,7 +2627,7 @@ list:
     game_script: game_specialairsdash
     flags:
       turn: false
-      loop: true
+      loop: false
       move: true
       fix_trans: false
       fix_rot: false

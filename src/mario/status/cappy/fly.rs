@@ -8,10 +8,11 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         println!("Isabelle fly?");
         return 0.into();
     }
+    GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 2.0));
 
     let owner_boma = get_owner_boma(weapon);
     let stick_y = ControlModule::get_stick_y(owner_boma);
-    let stick_y_mul = if stick_y.abs() < 0.2 {0.0} else {WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity"))};
+    let stick_y_mul = if stick_y.abs() < 0.2 {0.0} else {WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("attack_mul_min"))};
     let angle = (stick_y*(std::f32::consts::PI/2.0))*stick_y_mul;
 
     let lr = PostureModule::lr(owner_boma);
@@ -26,7 +27,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
     let speed_x = speed_max*angle.cos()*lr;
     let speed_y = speed_max*angle.sin();
-    println!("SpeedX: {speed_x} SpeedY: {speed_y}");
+    //println!("SpeedX: {speed_x} SpeedY: {speed_y}");
     sv_kinetic_energy!(
         set_speed,
         weapon,
@@ -36,7 +37,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     );
     let max_x = speed_max*angle.cos();
     let max_y = speed_max*angle.sin();
-    println!("MaxX: {max_x} MaxY: {max_y}");
+    //println!("MaxX: {max_x} MaxY: {max_y}");
     sv_kinetic_energy!(
         set_limit_speed,
         weapon,
@@ -46,7 +47,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     );
     let accel_x = -accel*lr*angle.cos();
     let accel_y = -accel*angle.sin();
-    println!("Accelx: {accel_x} AccelY: {accel_y}");
+    //println!("Accelx: {accel_x} AccelY: {accel_y}");
     sv_kinetic_energy!(
         set_accel,
         weapon,
@@ -80,7 +81,6 @@ unsafe fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
 unsafe fn captoss_fly_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_NORMAL);
-    WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
     WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     if StopModule::is_stop(weapon.module_accessor){
         captoss_ground_check(weapon);
@@ -121,24 +121,12 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     else{
         WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_ATTACK);
     }
-    /* 
-    if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_HIT){
-        WorkModule::on_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION);
-    }
-    if WorkModule::is_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_INFLICTION) {
-        if StopModule::is_stop(weapon.module_accessor){
-            let can_penetrate = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("is_penetration"))==0;
-            if !can_penetrate {
-                println!("Hit!");
-                //StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);
-                //return 0.into();
-            }
-        }
-    }*/
     if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
         WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
-        //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+
+        //KineticModule::mul_speed(weapon.module_accessor,  &Vector3f{x:-1.0, y: 1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
         return 0.into();
     }
     if captoss_delete_if_orphaned(weapon) {

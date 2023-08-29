@@ -94,17 +94,19 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         let owner = get_fighter_common_from_accessor(&mut *owner_boma);
         let owner_object = owner.battle_object;
         let owner_status = StatusModule::status_kind(owner_boma);
-        let owner_motion = MotionModule::motion_kind(owner_boma);
+        let owner_frame = MotionModule::frame(owner_boma);
+        let can_cap = WorkModule::is_flag(owner_boma,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
         
-        if *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPJUMP == owner_status {
+        if *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPJUMP == owner_status
+        && owner_frame < 4.0 {
             return false;
         }
         else if [*FIGHTER_STATUS_KIND_CATCH_WAIT,*FIGHTER_STATUS_KIND_CATCH_ATTACK,*FIGHTER_STATUS_KIND_THROW].contains(&owner_status) 
-        && cap_status != CAPTOSS_STATUS_KIND_TURN {
+        && cap_status == CAPTOSS_STATUS_KIND_HOLD {
             return false;
         }
         if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
-        && (cap_status != CAPTOSS_STATUS_KIND_TURN || owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE) {
+        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) {
             PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
             KineticModule::add_speed_outside(owner_boma,0, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
             VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
@@ -112,7 +114,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
             StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
 
-            if cap_status != CAPTOSS_STATUS_KIND_TURN{
+            if cap_status == CAPTOSS_STATUS_KIND_HOLD {
                 StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
                 WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
                 KineticModule::clear_speed_all(weapon.module_accessor);

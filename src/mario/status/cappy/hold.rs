@@ -10,29 +10,6 @@ unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     let hold_frame_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity_start_frame_max")) as i32;
     WorkModule::set_int(weapon.module_accessor, hold_frame_max, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
 
-    return 0.into();
-
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
-    let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
-    let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_current_y = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let brake = accel;
-    let lr = PostureModule::lr(weapon.module_accessor);
-    sv_kinetic_energy!(
-        set_speed,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_current_x,
-        speed_current_y
-    );
-    sv_kinetic_energy!(
-        set_accel,
-        weapon,
-        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        -accel,
-        -accel
-    );
-
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
@@ -128,6 +105,11 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
             captoss_effect_disappear(weapon);
         }
     }*/
+    if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
+        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+        return 0.into();
+    }
     WorkModule::dec_int(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
     if (hold_frame_current <= 0) {
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);

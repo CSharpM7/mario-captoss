@@ -3,12 +3,16 @@ use super::*;
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
 unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 3.0));
     
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
-    let speed_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_x"));
+    //let speed_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_x"));
+    let speed_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_y"));
-    let speed_y_limit = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_limit_speed_y"));
-    let accel_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_accel_y"));
+    let speed_y_limit = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("limit_gravity"));
+    let accel_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
+    let accel_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity"));
+    let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
     let lr = PostureModule::lr(weapon.module_accessor);
     WorkModule::set_int(weapon.module_accessor, life,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
@@ -16,23 +20,34 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         set_speed,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_x*lr
+        speed_x*lr*0.5,
+        speed_y
     );
     sv_kinetic_energy!(
         set_accel,
         weapon,
-        FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+        WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+        accel_x*0.5,
         -accel_y
     );
     sv_kinetic_energy!(
         set_limit_speed,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        0.0
+        speed_x,
+        speed_y_limit*10.0
     );
-    let rot_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_rot_mul"));
-    //KineticModule::mul_accel(weapon.module_accessor, &Vector3f {x: rot_mul, y: rot_mul, z: rot_mul }, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
-    EffectModule::detach_all(weapon.module_accessor, 5);
+    /*
+    sv_kinetic_energy!(
+        set_speed,
+        weapon,
+        WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL,
+        speed_x,
+        0.0
+    ); */
+    KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL);
+    KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
+    
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
@@ -40,7 +55,7 @@ unsafe fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
-        *WEAPON_KINETIC_TYPE_KOOPAJR_CANNONBALL_HOP,
+        *WEAPON_KINETIC_TYPE_NORMAL,
         *GROUND_CORRECT_KIND_AIR as u32,
         smashline::skyline_smash::app::GroundCliffCheckKind(0),
         false,
@@ -54,16 +69,19 @@ unsafe fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
 unsafe fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("Hop!");
-    //MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("hop"), 0.0, 1.0, false, 0.0, false, false);
-    //AttackModule::clear_all(weapon.module_accessor);
+    EffectModule::detach_all(weapon.module_accessor, 5);
+    //MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor, Hash40::new("hop"), -1.0,1.0,0.0);
+    AttackModule::clear_all(weapon.module_accessor);
     weapon.fastshift(L2CValue::Ptr(captoss_hop_main_status_loop as *const () as _)).into()
 }
 
 unsafe extern "C" fn captoss_hop_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let currentRate = MotionModule::rate(weapon.module_accessor);
-    let newRate = lerp(currentRate,0.0,0.1);
+    let lerpRate = if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {0.1} else {0.05};
+    let newRate = lerp(currentRate,0.0,lerpRate);
     MotionModule::set_rate(weapon.module_accessor, newRate);
+
+    captoss_check_recapture(weapon);
     0.into()
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
@@ -78,11 +96,34 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         captoss_effect_disappear(weapon);
         return 0.into();
     }
-    if GroundModule::is_floor_touch_line(weapon.module_accessor, *GROUND_TOUCH_FLAG_ALL as u32) {
-        KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_KOOPAJR_CANNONBALL_HOP);
+    
+    let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    if speed_current_x.abs() < 0.1 {
+        sv_kinetic_energy!(
+            set_speed,
+            weapon,
+            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+            0,
+            speed_current_y
+        );
+        let accel_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity"));
+        sv_kinetic_energy!(
+            set_accel,
+            weapon,
+            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+            0.0,
+            -accel_y
+        );
+        if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {
+            KineticModule::clear_speed_all(weapon.module_accessor);
+            KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
+        }
     }
-    if GroundModule::is_wall_touch_line(weapon.module_accessor, *GROUND_TOUCH_FLAG_ALL as u32) {
-        //KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_KOOPAJR_CANNONBALL_HOP);
+    if StatusModule::is_situation_changed(weapon.module_accessor) {
+        if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {
+            LANDING_EFFECT(weapon, Hash40::new("sys_merikomi_smoke"), Hash40::new("rot"), 0, -0.5, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
+        }
     }
     
     0.into()

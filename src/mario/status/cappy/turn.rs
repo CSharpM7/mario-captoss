@@ -13,7 +13,7 @@ unsafe fn captoss_turn_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         return 0.into();
     }
     else{
-        KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 1.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         sv_kinetic_energy!(
             set_limit_speed,
             weapon,
@@ -69,6 +69,11 @@ unsafe extern "C" fn captoss_turn_main_status_loop(weapon: &mut smashline::L2CWe
     JostleModule::set_status(weapon.module_accessor, false);
 
     if captoss_delete_if_orphaned(weapon) {
+        return 0.into();
+    }
+    if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
+        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
         return 0.into();
     }
 
