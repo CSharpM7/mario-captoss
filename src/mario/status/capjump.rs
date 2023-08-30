@@ -33,7 +33,6 @@ unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
 
 #[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
 unsafe fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
-    println!("Capjump!");
     MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_air_s_jump"), 0.0, 1.0, false, 0.0, false, false);
     let accel = 0.18;
     let distance = 1.1;

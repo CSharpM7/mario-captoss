@@ -109,3 +109,25 @@ list:
       - sound_hop
       - effect_hop
     extra: ~
+  jump:
+    game_script: game_jump
+    flags:
+      turn: false
+      loop: false
+      move: false
+      fix_trans: false
+      fix_rot: false
+      fix_scale: false
+      unk_40: false
+      unk_80: false
+      unk_100: false
+      unk_200: false
+      unk_400: false
+    blend_frames: 0
+    animations:
+      - name: capjump.nuanmb
+        unk: 0
+    scripts:
+      - sound_jump
+      - effect_jump
+    extra: ~

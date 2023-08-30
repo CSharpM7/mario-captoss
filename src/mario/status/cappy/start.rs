@@ -49,6 +49,8 @@ unsafe fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashli
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:0.0,z:0.0}, 0);
+    PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:10.0,y:-3.0,z:0.0});
     0.into()
 }
 unsafe extern "C" fn captoss_start_snap(weapon: &mut smashline::L2CWeaponCommon) {
@@ -63,6 +65,16 @@ unsafe extern "C" fn captoss_start_snap(weapon: &mut smashline::L2CWeaponCommon)
     let cap_offset = ModelModule::joint_global_offset_from_top(weapon.module_accessor, Hash40{hash: hash40("have")}, &mut capPos);       
     let newPos = Vector3f{x: PostureModule::pos_x(owner) + ownerPos.x - capPos.x - (2.0*lr), y: PostureModule::pos_y(owner) + ownerPos.y - (capPos.y/1.5), z: PostureModule::pos_z(owner) + ownerPos.z- capPos.z};
     PostureModule::set_pos(weapon.module_accessor, &newPos);
+
+    
+    let mut vec =Vector3f{x: 0.0, y: 0.0, z: 0.0};
+    let offset = ModelModule::joint_global_rotation(owner,Hash40::new("havel"),&mut vec,false);
+    let rot = Vector3f{x: vec.x, y: 0.0, z: 0.0};
+    PostureModule::set_rot(
+        weapon.module_accessor,
+        &rot,
+        0
+    );
 }
 
 pub fn install() {    

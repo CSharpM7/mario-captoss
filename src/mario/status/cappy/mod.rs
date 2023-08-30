@@ -4,6 +4,7 @@ mod fly;
 mod hold;
 mod hop;
 mod turn;
+mod jump;
 use crate::imports::imports_agent::*;
 
 pub fn install() {
@@ -13,6 +14,7 @@ pub fn install() {
     hold::install();
     hop::install();
     turn::install();
+    jump::install();
 }
 
 
@@ -96,30 +98,28 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         let owner_frame = MotionModule::frame(owner_boma);
         let can_cap = WorkModule::is_flag(owner_boma,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
         
-        if *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPJUMP == owner_status
-        && owner_frame < 4.0 {
-            return false;
-        }
-        else if [*FIGHTER_STATUS_KIND_CATCH_WAIT,*FIGHTER_STATUS_KIND_CATCH_ATTACK,*FIGHTER_STATUS_KIND_THROW].contains(&owner_status) 
+        if [*FIGHTER_STATUS_KIND_CATCH_WAIT,*FIGHTER_STATUS_KIND_CATCH_ATTACK,*FIGHTER_STATUS_KIND_THROW].contains(&owner_status) 
         && cap_status == CAPTOSS_STATUS_KIND_HOLD {
             return false;
         }
+        let is_damaged = is_damage_status(owner_boma) || is_captured_status(owner_boma);
         //if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
         if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
-        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) {
+        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
+        && !is_damaged {
             if captoss_distance_to_owner(weapon) < min_dis-3.0 {
                 //VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
                 WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
-
-                PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
-                KineticModule::add_speed_outside(owner_boma,0, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
+                let pos = *PostureModule::pos(weapon.module_accessor);
+                let owner_pos = *PostureModule::pos(owner_boma);
+                //PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
+                PostureModule::set_pos(owner_boma,&Vector3f{x: owner_pos.x, y: pos.y+2.0, z: owner_pos.z});
                 WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
                 //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
                 StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
 
                 if cap_status == CAPTOSS_STATUS_KIND_HOLD {
-                    StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-                    WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+                    StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_JUMP, false);
                     KineticModule::clear_speed_all(weapon.module_accessor);
                 }
                 return true;
@@ -128,6 +128,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         else {
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             captoss_effect_reappear(weapon);
+            macros::PLAY_SE(weapon, Hash40::new("se_item_boomerang_catch"));
             return true;
         }
     }

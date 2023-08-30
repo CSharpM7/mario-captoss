@@ -33,7 +33,6 @@ unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
 
 #[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
 unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
-    println!("Capdive!");
     WorkModule::on_flag(fighter.module_accessor,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
     let motion_g = Hash40::new("special_s_dash");
     let motion_a = Hash40::new("special_air_s_dash");
@@ -77,7 +76,7 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             fighter,
             FIGHTER_KINETIC_ENERGY_ID_STOP,
             ENERGY_STOP_RESET_TYPE_AIR,
-            dive_speed_x,
+            dive_speed_x*1.1,
             0.0,
             0.0,
             0.0,
@@ -87,14 +86,14 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             set_accel,
             fighter,
             FIGHTER_KINETIC_ENERGY_ID_STOP,
-            dive_accel_x,
+            dive_accel_x*1.25,
             0.0
         );
         sv_kinetic_energy!(
             set_limit_speed,
             fighter,
             FIGHTER_KINETIC_ENERGY_ID_STOP,
-            dive_speed_x*1.375,
+            dive_speed_x.abs()*3.0,
             0.0
         );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);

@@ -51,8 +51,13 @@ unsafe fn captoss_turn_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue
     if StopModule::is_stop(weapon.module_accessor){
         captoss_ground_check(weapon);
     }
-    //AttackModule::clear_all(weapon.module_accessor);
-    MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor as _, Hash40::new("turn"), -1.0,1.0,0.0);
+    AttackModule::clear_all(weapon.module_accessor);
+    if StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {
+        MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("turn"), 0.0, 1.0, false, 0.0, false, false);
+    }
+    else{
+        MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor as _, Hash40::new("turn"), -1.0,1.0,0.0);
+    }
     weapon.fastshift(L2CValue::Ptr(captoss_turn_main_status_loop as *const () as _)).into()
 }
 
@@ -157,6 +162,7 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_TURN)]
 unsafe fn captoss_turn_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     0.into()
 }
 pub fn install() {    

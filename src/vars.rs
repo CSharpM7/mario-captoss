@@ -10,6 +10,7 @@ pub const CAPTOSS_STATUS_KIND_TURN: i32 = 3;
 pub const CAPTOSS_STATUS_KIND_HOP: i32 = 4;
 pub const CAPTOSS_STATUS_KIND_HOLD: i32 = 5;
 pub const CAPTOSS_STATUS_KIND_SWALLOWED: i32 = 6;
+pub const CAPTOSS_STATUS_KIND_JUMP: i32 = 7;
 
 pub mod mario {
     pub mod instance {

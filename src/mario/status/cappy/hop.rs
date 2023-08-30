@@ -123,6 +123,8 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     if StatusModule::is_situation_changed(weapon.module_accessor) {
         if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {
             LANDING_EFFECT(weapon, Hash40::new("sys_merikomi_smoke"), Hash40::new("rot"), 0, -0.5, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
+            //macros::PLAY_SE(weapon, Hash40::new("se_item_sandbag_landing"));
+            macros::PLAY_SE(weapon, Hash40::new("se_item_kusudama_landing"));
         }
     }
     

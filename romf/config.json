@@ -160,6 +160,7 @@
             "fighter/mario/model/captoss/c00/model.xmb",
             
             "fighter/mario/motion/captoss/c00/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c00/capjump.nuanmb",
             "fighter/mario/motion/captoss/c00/motion_list.bin",
             "fighter/mario/motion/captoss/c00/update.prc"
         ],
@@ -178,6 +179,7 @@
             "fighter/mario/model/captoss/c01/model.xmb",
             
             "fighter/mario/motion/captoss/c01/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c01/capjump.nuanmb",
             "fighter/mario/motion/captoss/c01/motion_list.bin",
             "fighter/mario/motion/captoss/c01/update.prc"
         ],
@@ -196,6 +198,7 @@
             "fighter/mario/model/captoss/c02/model.xmb",
             
             "fighter/mario/motion/captoss/c02/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c02/capjump.nuanmb",
             "fighter/mario/motion/captoss/c02/motion_list.bin",
             "fighter/mario/motion/captoss/c02/update.prc"
         ],
@@ -214,6 +217,7 @@
             "fighter/mario/model/captoss/c03/model.xmb",
             
             "fighter/mario/motion/captoss/c03/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c03/capjump.nuanmb",
             "fighter/mario/motion/captoss/c03/motion_list.bin",
             "fighter/mario/motion/captoss/c03/update.prc"
         ],
@@ -232,6 +236,7 @@
             "fighter/mario/model/captoss/c04/model.xmb",
             
             "fighter/mario/motion/captoss/c04/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c04/capjump.nuanmb",
             "fighter/mario/motion/captoss/c04/motion_list.bin",
             "fighter/mario/motion/captoss/c04/update.prc"
         ],
@@ -250,6 +255,7 @@
             "fighter/mario/model/captoss/c05/model.xmb",
             
             "fighter/mario/motion/captoss/c05/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c05/capjump.nuanmb",
             "fighter/mario/motion/captoss/c05/motion_list.bin",
             "fighter/mario/motion/captoss/c05/update.prc"
         ],
@@ -268,6 +274,7 @@
             "fighter/mario/model/captoss/c06/model.xmb",
             
             "fighter/mario/motion/captoss/c06/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c06/capjump.nuanmb",
             "fighter/mario/motion/captoss/c06/motion_list.bin",
             "fighter/mario/motion/captoss/c06/update.prc"
         ],
@@ -286,6 +293,7 @@
             "fighter/mario/model/captoss/c07/model.xmb",
             
             "fighter/mario/motion/captoss/c07/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c07/capjump.nuanmb",
             "fighter/mario/motion/captoss/c07/motion_list.bin",
             "fighter/mario/motion/captoss/c07/update.prc"
         ]

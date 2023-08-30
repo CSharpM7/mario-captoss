@@ -20,7 +20,6 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     PostureModule::set_scale(weapon.module_accessor, 1.375,false);
     
     //let roty = if lr > 0.0 {0.0} else {180.0};
-    PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:0.0,z:0.0}, 0);
 
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
