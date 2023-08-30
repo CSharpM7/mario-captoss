@@ -18,7 +18,8 @@ unsafe fn sound_capjump(agent: &mut smashline::L2CAgentBase) {
 #[smashline::acmd("mario", ["effect_specialairsjump"])]
 unsafe fn effect_capjump(agent: &mut smashline::L2CAgentBase) {
     if macros::is_excute(agent) {
-        macros::EFFECT(agent, Hash40::new("sys_jump_aerial"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
+        //macros::EFFECT(agent, Hash40::new("sys_jump_aerial"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
+        macros::EFFECT(agent, Hash40::new("sys_v_smoke_a"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, false);
     }
 }
 #[smashline::acmd("mario", ["expression_specialairsjump"])]

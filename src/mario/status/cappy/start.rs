@@ -49,8 +49,9 @@ unsafe fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashli
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
 unsafe fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    let lr = PostureModule::lr(weapon.module_accessor);
     PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:0.0,z:0.0}, 0);
-    PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:10.0,y:-3.0,z:0.0});
+    PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:10.0*lr,y:-3.0,z:0.0});
     0.into()
 }
 unsafe extern "C" fn captoss_start_snap(weapon: &mut smashline::L2CWeaponCommon) {

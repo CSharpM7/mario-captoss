@@ -17,7 +17,8 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
     let lr = PostureModule::lr(owner_boma);
     PostureModule::set_lr(weapon.module_accessor, lr);
-    PostureModule::set_scale(weapon.module_accessor, 1.375,false);
+    let scale = PostureModule::scale(weapon.module_accessor);
+    PostureModule::set_scale(weapon.module_accessor, scale*1.375,false);
     
     //let roty = if lr > 0.0 {0.0} else {180.0};
 
