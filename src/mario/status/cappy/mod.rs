@@ -103,11 +103,13 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             return false;
         }
         let is_damaged = is_damage_status(owner_boma) || is_captured_status(owner_boma);
-        //if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
-        if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
+        if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
+        //if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
         && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
-        && !is_damaged {
+        && !is_damaged 
+        && StatusModule::prev_status_kind(weapon.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP {
             if captoss_distance_to_owner(weapon) < min_dis-3.0 {
+                VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
                 WorkModule::off_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
                 let pos = *PostureModule::pos(weapon.module_accessor);
                 let owner_pos = *PostureModule::pos(owner_boma);

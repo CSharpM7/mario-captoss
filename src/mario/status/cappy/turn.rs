@@ -54,6 +54,7 @@ unsafe fn captoss_turn_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue
     AttackModule::clear_all(weapon.module_accessor);
     if StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {
         MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("turn"), 0.0, 1.0, false, 0.0, false, false);
+        WorkModule::set_float(weapon.module_accessor, 2.0,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
     }
     else{
         MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor as _, Hash40::new("turn"), -1.0,1.0,0.0);
@@ -113,9 +114,13 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     }
 
     let kinetic_speed = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
+    let mut speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
+    if StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {
+        speed_max*=2.0;
+    }
     if (kinetic_speed > 0.1 && !is_reflected)
-    || (kinetic_speed >= speed_max-0.1 && is_reflected) {
+    || (kinetic_speed >= speed_max-0.1 && is_reflected) 
+    && !StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {
         WorkModule::set_float(weapon.module_accessor, kinetic_speed,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
         return 0.into();
     }
@@ -137,7 +142,10 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     //let direction = sv_math::vec2_normalize(direction_full.x,direction_full.y);
 
     let speed_current = WorkModule::get_float(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
-    let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
+    let mut accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
+    if StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {
+        accel*=2.0;
+    }
     let speed_new = (speed_current + accel).min(speed_max);
     WorkModule::set_float(weapon.module_accessor, speed_new,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
 
