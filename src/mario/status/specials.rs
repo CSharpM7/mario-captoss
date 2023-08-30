@@ -1,6 +1,52 @@
 use crate::imports::imports_agent::*;
 
+#[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
+unsafe fn specials_init(fighter: &mut L2CFighterCommon) -> L2CValue {
+    if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
+        let sum_speed_x = KineticModule::get_sum_speed_x(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        let sum_speed_y = KineticModule::get_sum_speed_y(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        let mul_x = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_start_mul_spd_x"));
+        let start_accel_x = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_start_air_acl_x"));
+        let speed_x = sum_speed_x/mul_x;
+        
+        sv_kinetic_energy!(
+            reset_energy,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_STOP,
+            ENERGY_STOP_RESET_TYPE_AIR,
+            speed_x,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        );
+        sv_kinetic_energy!(
+            set_brake,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_STOP,
+            start_accel_x,
+            0.0
+        );
+        KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);
+        let speed_y = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_attack_spd_y"));
 
+        sv_kinetic_energy!(
+            reset_energy,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+            ENERGY_GRAVITY_RESET_TYPE_GRAVITY,
+            0.0,
+            speed_y,
+            0.0,
+            0.0,
+            0.0
+        );
+        KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
+        KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
+        KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
+    }
+    0.into()
+}
 #[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
 unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
     if ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
@@ -34,7 +80,74 @@ unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
     );
     0.into()
 }
+#[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
+unsafe fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+    if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
+        KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
+        let air_accel_y = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_y"), 0);
+        let air_accel_y_stable = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_y_stable"), 0);
+        let air_accel_x = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_x_mul"), 0);
+
+        let special_s_attack_spd_y = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_attack_spd_y"));
+        let special_s_attack_acl_y = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_attack_acl_y"));
+        let special_s_attack_max_y = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_attack_max_y"));
+
+        if WorkModule::is_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_SPECIAL_FALL) {
+            if !WorkModule::is_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_HOP) {
+                WorkModule::on_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_HOP);
+                /*
+                fighter.clear_lua_stack();
+                lua_args!(fighter, FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
+                let speed_y = app::sv_kinetic_energy::get_speed_y(fighter.lua_state_agent);
+                */
+
+                sv_kinetic_energy!(
+                    set_speed,
+                    fighter,
+                    FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+                    special_s_attack_spd_y //0.0
+                );
+            }
+            sv_kinetic_energy!(
+                set_accel,
+                fighter,
+                FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+                -special_s_attack_acl_y
+            );
+            sv_kinetic_energy!(
+                set_limit_speed,
+                fighter,
+                FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+                special_s_attack_max_y
+            );
+            let sum_speed_y = KineticModule::get_sum_speed_y(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        }
+        else {
+            sv_kinetic_energy!(
+                set_accel,
+                fighter,
+                FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+                -air_accel_y
+            );
+            sv_kinetic_energy!(
+                set_accel_x_mul,
+                fighter,
+                FIGHTER_KINETIC_ENERGY_ID_CONTROL,
+                air_accel_x
+            );
+            sv_kinetic_energy!(
+                set_limit_speed,
+                fighter,
+                FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+                air_accel_y_stable
+            );
+        } 
+    }
+    0.into()
+}
 
 pub fn install() {
+    specials_init::install();
     specials_pre::install();
+    specials_exec::install();
 }

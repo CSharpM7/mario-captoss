@@ -53,15 +53,20 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_AIR_STOP);
         GroundModule::set_correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
  
-        let dive_speed_x = 1.9*lr;
-        let dive_speed_y = 1.5;
+        let dive_speed_x = WorkModule::get_param_float(fighter.module_accessor, hash40("air_speed_x_stable"), 0)*lr;
+
+        let air_accel_x = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_x_mul"), 0);
+        let dive_accel_x = air_accel_x*1.25;
+
+        let dive_max_speed_x = 1.9*lr;
+        let dive_speed_y = 0.75;
         sv_kinetic_energy!(
             reset_energy,
             fighter,
             FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
             ENERGY_GRAVITY_RESET_TYPE_GRAVITY,
             0.0,
-            0.0,
+            dive_speed_y,
             0.0,
             0.0,
             0.0
@@ -79,14 +84,24 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             0.0
         );
         sv_kinetic_energy!(
-            set_speed,
+            set_accel,
             fighter,
-            FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
-            dive_speed_y
+            FIGHTER_KINETIC_ENERGY_ID_STOP,
+            dive_accel_x,
+            0.0
+        );
+        sv_kinetic_energy!(
+            set_limit_speed,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_STOP,
+            dive_speed_x*1.375,
+            0.0
         );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);
+        KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
         WorkModule::enable_transition_term_group(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_CLIFF);
     }
+    KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
 
     fighter.sub_shift_status_main(L2CValue::Ptr(capdive_main_status_loop as *const () as _))
 }

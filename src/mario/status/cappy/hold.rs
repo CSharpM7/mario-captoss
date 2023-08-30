@@ -31,7 +31,6 @@ unsafe fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
 unsafe fn captoss_hold_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("Hold!");
     if StopModule::is_stop(weapon.module_accessor){
         //captoss_ground_check(weapon);
     }
@@ -86,25 +85,6 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
             //return 0.into()
         }
     }
-    /*
-    if captoss_distance_to_owner(weapon) < 12.0 {
-        PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
-        KineticModule::add_speed_outside(owner_boma,0, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
-        let owner = get_fighter_common_from_accessor(&mut *owner_boma);
-        let owner_object = owner.battle_object;
-        if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED){
-            VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
-            WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
-            //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
-            StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
-            StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-            KineticModule::clear_speed_all(weapon.module_accessor);
-        }
-        else{
-            smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-            captoss_effect_disappear(weapon);
-        }
-    }*/
     if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
         WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);

@@ -68,16 +68,16 @@ unsafe extern "C" fn get_linked_parent_pos(weapon: &mut smashline::L2CWeaponComm
 
     return Vector3f{x: parent_x, y: parent_y, z: 0.0};
 }
-unsafe extern "C" fn get_parent_pos(weapon: &mut smashline::L2CWeaponCommon) -> Vector3f{
-    let owner_boma = get_owner_boma(weapon);
-    return *PostureModule::pos(owner_boma);
-}
 unsafe extern "C" fn captoss_distance_to_owner(weapon: &mut smashline::L2CWeaponCommon) -> f32 {
-    let parent_pos = get_parent_pos(weapon);
+    let owner_boma = get_owner_boma(weapon);
+    let owner_offset_y = WorkModule::get_param_float(owner_boma, hash40("height"), 0) / 2.0;
+    let parent_pos = *PostureModule::pos(owner_boma);
+
     let pos_x = PostureModule::pos_x(weapon.module_accessor);
     let pos_y = PostureModule::pos_y(weapon.module_accessor);
+    let offset_y = 1.25;
 
-    return sv_math::vec2_distance(parent_pos.x,parent_pos.y,pos_x,pos_y);
+    return sv_math::vec2_distance(parent_pos.x,parent_pos.y+owner_offset_y,pos_x,pos_y+offset_y);
 }
 unsafe extern "C" fn captoss_owner_is_mario(weapon: &mut smashline::L2CWeaponCommon) -> bool {
     let owner_id = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER) as u32;
@@ -87,9 +87,8 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
     let min_dis = if !is_reflected {11.0} else {9.0};
     let cap_status = StatusModule::status_kind(weapon.module_accessor);
-    let turn_add = if cap_status == CAPTOSS_STATUS_KIND_TURN {2.0} else {0.0};
 
-    if captoss_distance_to_owner(weapon) < min_dis+turn_add {
+    if captoss_distance_to_owner(weapon) < min_dis {
         let owner_boma = get_owner_boma(weapon);
         let owner = get_fighter_common_from_accessor(&mut *owner_boma);
         let owner_object = owner.battle_object;
@@ -105,22 +104,26 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         && cap_status == CAPTOSS_STATUS_KIND_HOLD {
             return false;
         }
-        if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
+        //if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
+        if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
         && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) {
-            PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
-            KineticModule::add_speed_outside(owner_boma,0, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
-            VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
-            WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
-            //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
-            StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
+            if captoss_distance_to_owner(weapon) < min_dis-3.0 {
+                //VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
+                WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
 
-            if cap_status == CAPTOSS_STATUS_KIND_HOLD {
-                StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
-                WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
-                KineticModule::clear_speed_all(weapon.module_accessor);
+                PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
+                KineticModule::add_speed_outside(owner_boma,0, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
+                WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
+                //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
+                StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
+
+                if cap_status == CAPTOSS_STATUS_KIND_HOLD {
+                    StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+                    WorkModule::set_int(weapon.module_accessor, 15,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
+                    KineticModule::clear_speed_all(weapon.module_accessor);
+                }
+                return true;
             }
-
-            return true;
         }
         else {
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
