@@ -7,27 +7,30 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     //let speed_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_x"));
-    let speed_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_y"));
+    let speed_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN).abs();
+    let speed_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    //let speed_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_y"));
     let speed_y_limit = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("limit_gravity"));
     let accel_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let accel_y = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity"));
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
+
     let lr = PostureModule::lr(weapon.module_accessor);
     WorkModule::set_int(weapon.module_accessor, life,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
+    KineticModule::clear_speed_all(weapon.module_accessor);
     sv_kinetic_energy!(
         set_speed,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        speed_x*lr*0.5,
+        speed_x*lr,
         speed_y
     );
     sv_kinetic_energy!(
         set_accel,
         weapon,
         WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-        accel_x*0.5,
+        -accel_x*lr*0.5,
         -accel_y
     );
     sv_kinetic_energy!(
@@ -94,6 +97,7 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     if died {
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
         captoss_effect_disappear(weapon);
+        captoss_effect_reappear(weapon);
         return 0.into();
     }
     

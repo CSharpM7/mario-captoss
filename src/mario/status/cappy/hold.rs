@@ -85,9 +85,11 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
             //return 0.into()
         }
     }
-    if AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR){
-        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+    if captoss_reflect_check(weapon) {
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+        return 0.into();
+    }
+    if captoss_swallowed_check(weapon) {
         return 0.into();
     }
     WorkModule::dec_int(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);

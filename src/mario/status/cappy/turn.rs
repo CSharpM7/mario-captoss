@@ -91,6 +91,9 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
+    if captoss_swallowed_check(weapon) {
+        return 0.into();
+    }
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
     let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
@@ -163,6 +166,11 @@ unsafe fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
         lr_fix = -1.0;
     }
     PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:speed_x,y:speed_y,z:0.0});
+
+    if captoss_reflect_check(weapon) {
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+        return 0.into();
+    }
     0.into()
 }
 

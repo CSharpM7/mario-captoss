@@ -47,6 +47,7 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     if fighter.is_situation(*SITUATION_KIND_GROUND) {
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION);
         GroundModule::set_correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP_ATTACK));
+        KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
     }
     else {
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_AIR_STOP);
@@ -94,6 +95,17 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             fighter,
             FIGHTER_KINETIC_ENERGY_ID_STOP,
             dive_speed_x.abs()*3.0,
+            0.0
+        );
+        sv_kinetic_energy!(
+            reset_energy,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_MOTION,
+            ENERGY_MOTION_RESET_TYPE_AIR_TRANS,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);

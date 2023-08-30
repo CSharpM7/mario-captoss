@@ -5,6 +5,7 @@ mod hold;
 mod hop;
 mod turn;
 mod jump;
+mod swallowed;
 use crate::imports::imports_agent::*;
 
 pub fn install() {
@@ -13,6 +14,7 @@ pub fn install() {
     fly::install();
     hold::install();
     hop::install();
+    swallowed::install();
     turn::install();
     jump::install();
 }
@@ -34,6 +36,26 @@ unsafe extern "C" fn captoss_ground_check(weapon: &mut smashline::L2CWeaponCommo
     }*/
     return false;
 }
+
+unsafe extern "C" fn captoss_swallowed_check(weapon: &mut smashline::L2CWeaponCommon) -> bool{
+    let swallowed = WorkModule::is_flag(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_FLAG_SWALLOWED);
+    if swallowed {
+        //new status
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_SWALLOWED, false);
+    }
+    return swallowed;
+}
+unsafe extern "C" fn captoss_reflect_check(weapon: &mut smashline::L2CWeaponCommon) -> bool{
+    let reflected = AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR);
+    let was_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+
+    let toReturn = (reflected && !was_reflected);
+    if toReturn == true {
+        WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
+    }
+    return toReturn;
+}
+
 unsafe extern "C" fn captoss_dec_life(weapon: &mut smashline::L2CWeaponCommon) ->bool{
     WorkModule::dec_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
     let life = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
@@ -87,11 +109,13 @@ unsafe extern "C" fn captoss_owner_is_mario(weapon: &mut smashline::L2CWeaponCom
 }
 unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCommon) -> bool {
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
-    let min_dis = if !is_reflected {11.0} else {9.0};
+    let mut min_dis = if !is_reflected {11.0} else {9.0};
     let cap_status = StatusModule::status_kind(weapon.module_accessor);
+    let owner_boma = get_owner_boma(weapon);
+    let owner_scale = PostureModule::scale(owner_boma);
+    min_dis *= owner_scale;
 
     if captoss_distance_to_owner(weapon) < min_dis {
-        let owner_boma = get_owner_boma(weapon);
         let owner = get_fighter_common_from_accessor(&mut *owner_boma);
         let owner_object = owner.battle_object;
         let owner_status = StatusModule::status_kind(owner_boma);

@@ -108,7 +108,10 @@ pub unsafe extern "C" fn effect_hold(agent: &mut L2CAgentBase) {
 #[smashline::acmd("mario_captoss", ["effect_jump"])]
 pub unsafe extern "C" fn effect_jump(agent: &mut L2CAgentBase) {
     let lua_state = agent.lua_state_agent;
-    macros::EFFECT_FOLLOW(agent, Hash40::new("sys_piyo"), Hash40::new("rot"), 0, 2.75, 3.5, 0, 0, -10, 0.75, false);
+    if is_excute(agent) {
+        macros::EFFECT_FOLLOW(agent, Hash40::new("sys_piyo"), Hash40::new("rot"), 0, 2.75, 3.5, 0, 0, -10, 0.75, false);
+        macros::EFFECT(agent, Hash40::new("sys_v_smoke_a"), Hash40::new("rot"), 0, 2.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, false);
+    }
 }
 #[smashline::acmd("mario_captoss", ["sound_jump"])]
 pub unsafe extern "C" fn sound_jump(agent: &mut L2CAgentBase) {

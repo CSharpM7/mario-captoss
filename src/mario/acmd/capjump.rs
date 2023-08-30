@@ -8,7 +8,8 @@ unsafe fn sound_capjump(agent: &mut smashline::L2CAgentBase) {
     }
     frame(agent.lua_state_agent, 2.0);
     if macros::is_excute(agent) {
-        macros::PLAY_SEQUENCE(agent, Hash40::new("seq_mario_rnd_jump"));
+        //macros::PLAY_SEQUENCE(agent, Hash40::new("seq_mario_rnd_jump"));
+        PLAY_VC(agent, Hash40::new("vc_mario_appeal02"), 0.5);
     }
     frame(agent.lua_state_agent, 18.0);
     if macros::is_excute(agent) {
@@ -19,7 +20,6 @@ unsafe fn sound_capjump(agent: &mut smashline::L2CAgentBase) {
 unsafe fn effect_capjump(agent: &mut smashline::L2CAgentBase) {
     if macros::is_excute(agent) {
         //macros::EFFECT(agent, Hash40::new("sys_jump_aerial"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
-        macros::EFFECT(agent, Hash40::new("sys_v_smoke_a"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, false);
     }
 }
 #[smashline::acmd("mario", ["expression_specialairsjump"])]
