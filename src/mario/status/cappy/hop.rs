@@ -16,6 +16,7 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
 
     let lr = PostureModule::lr(weapon.module_accessor);
+    println!("Hop LR: {lr}");
     WorkModule::set_int(weapon.module_accessor, life,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
     KineticModule::clear_speed_all(weapon.module_accessor);
@@ -49,7 +50,7 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
         0.0
     ); */
     KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL);
-    KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
+    //KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_ROT_NORMAL);
     
     0.into()
 }
@@ -129,6 +130,16 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
             LANDING_EFFECT(weapon, Hash40::new("sys_merikomi_smoke"), Hash40::new("rot"), 0, -0.5, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
             //macros::PLAY_SE(weapon, Hash40::new("se_item_sandbag_landing"));
             macros::PLAY_SE(weapon, Hash40::new("se_item_kusudama_landing"));
+            
+            let accel_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
+            let lr = PostureModule::lr(weapon.module_accessor);
+            sv_kinetic_energy!(
+                set_accel,
+                weapon,
+                WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+                -accel_x*lr*2.0,
+                0.0
+            );
         }
     }
     

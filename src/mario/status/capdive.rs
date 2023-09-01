@@ -5,7 +5,7 @@ unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
     StatusModule::init_settings(
         fighter.module_accessor,
         SituationKind(*SITUATION_KIND_NONE),
-        *FIGHTER_KINETIC_TYPE_MOTION,
+        *FIGHTER_KINETIC_TYPE_UNIQ,
         *GROUND_CORRECT_KIND_KEEP as u32,
         //*GROUND_CORRECT_KIND_GROUND_CLIFF_STOP as u32,
         GroundCliffCheckKind(*GROUND_CLIFF_CHECK_KIND_ALWAYS),
@@ -50,9 +50,9 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
     }
     else {
-        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_AIR_STOP);
+        //KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_AIR_STOP);
         GroundModule::set_correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_AIR));
- 
+        WorkModule::enable_transition_term_group(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_CLIFF);
         let dive_speed_x = WorkModule::get_param_float(fighter.module_accessor, hash40("air_speed_x_stable"), 0)*lr;
 
         let air_accel_x = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_x_mul"), 0);
@@ -71,7 +71,16 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             0.0,
             0.0
         );
+        let air_accel_y_mul = 0.5;
+        let air_accel_y = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_y"), 0);
+        sv_kinetic_energy!(
+            set_accel,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+            -air_accel_y * air_accel_y_mul
+        );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
+        /* 
         sv_kinetic_energy!(
             reset_energy,
             fighter,
@@ -109,8 +118,7 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
             0.0
         );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);
-        KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
-        WorkModule::enable_transition_term_group(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_CLIFF);
+        KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);*/
     }
     KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
 

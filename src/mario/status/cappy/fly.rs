@@ -6,7 +6,7 @@ pub const NEXT_STATUS: i32 = CAPTOSS_STATUS_KIND_HOLD;
 unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
-    
+
     if !captoss_owner_is_mario(weapon) {
         println!("Isabelle fly?");
         return 0.into();
@@ -122,7 +122,9 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
         WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_ATTACK);
     }
     if captoss_reflect_check(weapon) {
-        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+        KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_SWALLOWED, false);
         return 0.into();
     }
     if captoss_swallowed_check(weapon) {
@@ -130,6 +132,12 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     }
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
+    }
+    if AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_SEARCH)
+    && AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_ATTACK) {
+        println!("Stupid villager");
+        smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+        captoss_effect_disappear(weapon);
     }
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_SIDE as u32)
     {

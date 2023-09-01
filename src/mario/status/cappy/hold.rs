@@ -44,29 +44,34 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
     if !captoss_owner_is_mario(weapon) {
         return 0.into();
     }
-    let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    if speed_current_x.abs() < 0.1 {
-        sv_kinetic_energy!(
-            set_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            0,
-            speed_current_y
-        );
-    }
-    if speed_current_y.abs() < 0.1 {
-        sv_kinetic_energy!(
-            set_speed,
-            weapon,
-            WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
-            speed_current_x,
-            0
-        );
-    }
     let sum_speed_len = KineticModule::get_sum_speed_length(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     if sum_speed_len < 0.2 {
         KineticModule::clear_speed_all(weapon.module_accessor);
+        KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 0.0, y: 0.0, z: 0.0 },*KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+    }
+    else{
+        let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        if speed_current_x.abs() < 0.2 {
+            sv_kinetic_energy!(
+                set_speed,
+                weapon,
+                WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+                0,
+                speed_current_y
+            );
+            KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 0.0, y: 1.0, z: 0.0 },*KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        }
+        if speed_current_y.abs() < 0.2 {
+            sv_kinetic_energy!(
+                set_speed,
+                weapon,
+                WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+                speed_current_x,
+                0
+            );
+            KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 1.0, y: 0.0, z: 0.0 },*KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        }
     }
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();

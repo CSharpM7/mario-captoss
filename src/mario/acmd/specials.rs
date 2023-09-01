@@ -53,7 +53,7 @@ unsafe fn effect_mario_specials(agent: &mut smashline::L2CAgentBase) {
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
         //macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("mario_supermant_wind_r"), Hash40::new("mario_supermant_wind_l"), Hash40::new("top"), 2.5, 5, 9.5, 0, 0, 0, 1, true, *EF_FLIP_NONE);
-        macros::EFFECT(agent, Hash40::new("mario_supermant_flash"), Hash40::new("top"), 0, 5.5, 9, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
+        macros::EFFECT(agent, Hash40::new("mario_supermant_flash"), Hash40::new("top"), 0, 8.0, 9, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
     }
     frame(agent.lua_state_agent, 13.0);
     if macros::is_excute(agent) {
@@ -63,7 +63,18 @@ unsafe fn effect_mario_specials(agent: &mut smashline::L2CAgentBase) {
     }
 }
 
+
+#[smashline::acmd("mario", ["game_specialsdash","game_specialairsdash"])]
+unsafe fn specials_dash_game(agent: &mut smashline::L2CAgentBase) {
+    frame(agent.lua_state_agent, 6.0);
+    if macros::is_excute(agent) {
+        notify_event_msc_cmd!(agent, Hash40::new_raw(0x2127e37c07), *GROUND_CLIFF_CHECK_KIND_ALWAYS);
+    }
+}
+
+
 pub fn install() {    
     game_mario_specials::install();
     effect_mario_specials::install();
+    specials_dash_game::install();
 }

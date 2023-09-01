@@ -12,11 +12,18 @@ unsafe fn mario_update(fighter: &mut L2CFighterCommon) {
         return;
     }
     if ArticleModule::is_exist(boma, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
+        if !VarModule::is_flag(fighter.battle_object, mario::instance::flag::HATLESS){
+            VarModule::on_flag(fighter.battle_object, mario::instance::flag::HATLESS);
+        }
         ArticleModule::remove_exist(boma, *FIGHTER_MARIO_GENERATE_ARTICLE_CAPPY, ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL));
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), false);
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), true);
     }
     else{
+        if VarModule::is_flag(fighter.battle_object, mario::instance::flag::HATLESS){
+            VarModule::off_flag(fighter.battle_object, mario::instance::flag::HATLESS);
+            EFFECT_FOLLOW(fighter,Hash40::new("sys_item_arrival"),Hash40::new("hat"),0,0,0,0,0,0,0.35,false);
+        }
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), true);
         ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), false);
     }

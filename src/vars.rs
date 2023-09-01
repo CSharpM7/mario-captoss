@@ -16,6 +16,7 @@ pub mod mario {
     pub mod instance {
         pub mod flag {
             pub const CAPJUMP_ENABLED: i32 = 0x0100;
+            pub const HATLESS: i32 = 0x0101;
         }
         pub mod int {
             pub const SPECIAL_LW_ROTATIONS: i32 = 0x0100;

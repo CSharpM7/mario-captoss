@@ -127,11 +127,17 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             return false;
         }
         let is_damaged = is_damage_status(owner_boma) || is_captured_status(owner_boma);
+        let can_transition = WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_GROUND_JUMP)
+        || WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_JUMP_AERIAL)
+        || [*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
+
         if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
         //if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
         && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
         && !is_damaged 
-        && StatusModule::prev_status_kind(weapon.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP {
+        //&& StatusModule::prev_status_kind(weapon.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP 
+        && can_transition
+        {
             if captoss_distance_to_owner(weapon) < min_dis-3.0 {
                 VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
                 WorkModule::off_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
@@ -180,6 +186,7 @@ unsafe extern "C" fn captoss_effect_reappear(weapon: &mut smashline::L2CWeaponCo
     if captoss_delete_if_orphaned(weapon) {
         return;
     }
+    return;
     let owner = get_owner_boma(weapon);
 
     EffectModule::req_follow(
