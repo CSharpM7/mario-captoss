@@ -106,6 +106,7 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
 }
 #[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
 unsafe fn captoss_hold_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    EFFECT_OFF_KIND(weapon,Hash40::new("sys_starrod_splash"),false,false);
     0.into()
 }
 

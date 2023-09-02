@@ -133,12 +133,6 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
-    if AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_SEARCH)
-    && AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_ATTACK) {
-        println!("Stupid villager");
-        smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-        captoss_effect_disappear(weapon);
-    }
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_SIDE as u32)
     {
         StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);

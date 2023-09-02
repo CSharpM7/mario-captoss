@@ -111,11 +111,15 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
     let mut min_dis = if !is_reflected {11.0} else {9.0};
     let cap_status = StatusModule::status_kind(weapon.module_accessor);
+    let cap_team = TeamModule::team_no(weapon.module_accessor);
     let owner_boma = get_owner_boma(weapon);
     let owner_scale = PostureModule::scale(owner_boma);
+    let owner_team = TeamModule::team_no(owner_boma);
     min_dis *= owner_scale;
 
-    if captoss_distance_to_owner(weapon) < min_dis {
+    if captoss_distance_to_owner(weapon) < min_dis 
+    && cap_team == owner_team
+    {
         let owner = get_fighter_common_from_accessor(&mut *owner_boma);
         let owner_object = owner.battle_object;
         let owner_status = StatusModule::status_kind(owner_boma);
