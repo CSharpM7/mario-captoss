@@ -82,10 +82,7 @@ unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
 unsafe extern "C" fn capdive_main_status_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     if StatusModule::is_situation_changed(fighter.module_accessor) {
         if fighter.is_situation(*SITUATION_KIND_GROUND) {
-            macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 0, false);
-            ControlModule::set_rumble(fighter.module_accessor, Hash40::new("rbkind_lands"), 0, false, *BATTLE_OBJECT_ID_INVALID as u32);
-
-            if WorkModule::is_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_SPECIAL_FALL) {
+            if !WorkModule::is_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE) {
                 if CancelModule::is_enable_cancel(fighter.module_accessor) 
                 && false {
                     fighter.change_status(FIGHTER_STATUS_KIND_LANDING.into(), false.into());
@@ -101,6 +98,9 @@ unsafe extern "C" fn capdive_main_status_loop(fighter: &mut L2CFighterCommon) ->
                 return 0.into();
             }
         }
+        macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 0, false);
+        ControlModule::set_rumble(fighter.module_accessor, Hash40::new("rbkind_lands"), 0, false, *BATTLE_OBJECT_ID_INVALID as u32);
+
         //WorkModule::set_float(fighter.module_accessor, MotionModule::frame(fighter.module_accessor),*FIGHTER_MARIO_STATUS_SPECIAL_S_WORK_ID_FLOAT_REFLECT_MOTION_FRAME);
         let motion_g = Hash40::new("special_s_dash");
         let motion_a = Hash40::new("special_air_s_dash");
