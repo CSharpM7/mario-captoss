@@ -53,6 +53,10 @@ unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
         //StatusModule::set_status_kind_interrupt(fighter.module_accessor,*FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE);
         StatusModule::change_status_force(fighter.module_accessor, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPDIVE, false);
     }
+    else{
+        VarModule::on_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED);
+    }
+
     StatusModule::init_settings(
         fighter.module_accessor,
         SituationKind(*SITUATION_KIND_NONE),

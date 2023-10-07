@@ -23,11 +23,10 @@ pub unsafe fn can_install(module_accessor: *mut BattleObjectModuleAccessor) -> b
     else if cat == *BATTLE_OBJECT_CATEGORY_WEAPON {
         let owner_boma = &mut *sv_battle_object::module_accessor((WorkModule::get_int(module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER)) as u32);  
         let owner_kind = utility::get_kind(&mut *owner_boma);
-        if owner_kind == *FIGHTER_KIND_KOOPA {
+        if owner_kind == *FIGHTER_KIND_MARIO {
             return true;
         }
-    }
-    */
+    }*/
     
     return false;
 }

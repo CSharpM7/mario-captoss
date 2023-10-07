@@ -63,18 +63,7 @@ unsafe fn effect_mario_specials(agent: &mut smashline::L2CAgentBase) {
     }
 }
 
-
-#[smashline::acmd("mario", ["game_specialsdash","game_specialairsdash"])]
-unsafe fn specials_dash_game(agent: &mut smashline::L2CAgentBase) {
-    frame(agent.lua_state_agent, 6.0);
-    if macros::is_excute(agent) {
-        notify_event_msc_cmd!(agent, Hash40::new_raw(0x2127e37c07), *GROUND_CLIFF_CHECK_KIND_ALWAYS);
-    }
-}
-
-
 pub fn install() {    
     game_mario_specials::install();
     effect_mario_specials::install();
-    specials_dash_game::install();
 }

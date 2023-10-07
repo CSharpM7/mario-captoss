@@ -15,11 +15,20 @@ pub const CAPTOSS_STATUS_KIND_JUMP: i32 = 7;
 pub mod mario {
     pub mod instance {
         pub mod flag {
-            pub const CAPJUMP_ENABLED: i32 = 0x0100;
-            pub const HATLESS: i32 = 0x0101;
+            pub const HATLESS: i32 = 0x0100;
+            pub const CAPJUMP_ENABLED: i32 = 0x0101;
+            pub const CAPDIVE_ENABLED: i32 = 0x0102;
+            pub const CAPDIVE_ENABLE_ON_RETURN: i32 = 0x0103;
         }
         pub mod int {
             pub const SPECIAL_LW_ROTATIONS: i32 = 0x0100;
+        }
+    }
+}
+pub mod mario_cappy {
+    pub mod instance {
+        pub mod flag {
+            pub const CAPDIVE_ENABLE_ON_RETURN: i32 = 0x0100;
         }
     }
 }
