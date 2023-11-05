@@ -2651,7 +2651,7 @@ list:
     extra:
       xlu_start: 0
       xlu_end: 0
-      cancel_frame: 30
+      cancel_frame: 10
       no_stop_intp: false
   special_air_s_dash:
     game_script: game_specialairsdash
@@ -2711,7 +2711,7 @@ list:
     extra:
       xlu_start: 0
       xlu_end: 0
-      cancel_frame: 30
+      cancel_frame: 10
       no_stop_intp: false
   special_air_s_jump:
     game_script: game_specialairsjump
@@ -2741,7 +2741,7 @@ list:
     extra:
       xlu_start: 0
       xlu_end: 0
-      cancel_frame: 10
+      cancel_frame: 16
       no_stop_intp: false
   special_hi:
     game_script: game_specialhi

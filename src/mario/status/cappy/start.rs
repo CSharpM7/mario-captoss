@@ -1,13 +1,12 @@
 use crate::imports::imports_acmd::*;
 use super::*;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
-unsafe fn captoss_start_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_start_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     captoss_start_snap(weapon);
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
-unsafe fn captoss_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -23,8 +22,7 @@ unsafe fn captoss_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
-unsafe fn captoss_start_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+pub unsafe extern "C" fn captoss_start_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("haved"), 0.0, 1.0, false, 0.0, false, false);
     weapon.fastshift(L2CValue::Ptr(captoss_start_main_status_loop as *const () as _)).into()
 }
@@ -32,8 +30,8 @@ unsafe fn captoss_start_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValu
 unsafe extern "C" fn captoss_start_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
-unsafe fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     if !captoss_owner_is_mario(weapon) {
         return 0.into();
     }
@@ -47,8 +45,8 @@ unsafe fn captoss_start_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashli
     captoss_start_snap(weapon);
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_START)]
-unsafe fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_start_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let lr = PostureModule::lr(weapon.module_accessor);
     PostureModule::set_rot(weapon.module_accessor, &Vector3f{x:0.0,y:0.0,z:0.0}, 0);
     PostureModule::add_pos(weapon.module_accessor, &Vector3f{x:10.0*lr,y:-3.0,z:0.0});
@@ -79,9 +77,11 @@ unsafe extern "C" fn captoss_start_snap(weapon: &mut smashline::L2CWeaponCommon)
 }
 
 pub fn install() {    
-    captoss_start_init::install();
-    captoss_start_pre::install();
-    captoss_start_main::install();
-    captoss_start_exec::install();
-    captoss_start_end::install();
+    Agent::new("mario_captoss")
+        .status(Init, CAPTOSS_STATUS_KIND_START, captoss_start_init)
+        .status(Pre, CAPTOSS_STATUS_KIND_START, captoss_start_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_START, captoss_start_main)
+        .status(Exec, CAPTOSS_STATUS_KIND_START, captoss_start_exec)
+        .status(End, CAPTOSS_STATUS_KIND_START, captoss_start_end)
+        .install();
 }

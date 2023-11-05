@@ -1,8 +1,6 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 
-
-#[status("mario",FIGHTER_STATUS_KIND_APPEAL)]
-unsafe fn appeal_main(fighter: &mut L2CFighterCommon) -> L2CValue {
+pub unsafe extern "C" fn appeal_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     let toReturn = fighter.status_Appeal();
 
     let motion_kind = MotionModule::motion_kind(fighter.module_accessor);
@@ -17,5 +15,7 @@ unsafe fn appeal_main(fighter: &mut L2CFighterCommon) -> L2CValue {
 }
 
 pub fn install() {
-    appeal_main::install();
+    Agent::new("mario")
+        .status(Main, *FIGHTER_STATUS_KIND_APPEAL, appeal_main)
+        .install();
 }

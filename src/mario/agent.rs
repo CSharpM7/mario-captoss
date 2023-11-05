@@ -14,7 +14,7 @@ unsafe extern "C" fn change_status_callback(fighter: &mut L2CFighterCommon) -> L
         //Re-enable capjump
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
         if !fighter.is_status_one_of(&[
-        *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP]) {
+        FIGHTER_MARIO_STATUS_KIND_CAPDIVE,FIGHTER_MARIO_STATUS_KIND_CAPJUMP]) {
             VarModule::on_flag(fighter.battle_object, mario::instance::flag::CAPJUMP_ENABLED);
             VarModule::on_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED);
         }
@@ -35,20 +35,17 @@ unsafe fn agent_start(fighter: &mut L2CFighterCommon)
     fighter.global_table[USE_SPECIAL_S_CALLBACK].assign(&L2CValue::Ptr(special_s_callback as *const () as _));
     fighter.global_table[STATUS_CHANGE_CALLBACK].assign(&L2CValue::Ptr(change_status_callback as *const () as _));   
 }
-#[event("mario", initialize)]
-fn agent_init(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        agent_start(fighter);
-    }
+pub unsafe extern "C" fn agent_init(fighter: &mut L2CFighterCommon) {
+    agent_start(fighter);
 }
-#[event(start)]
-fn agent_reset(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        agent_start(fighter);
-    }
+pub unsafe extern "C" fn agent_reset(fighter: &mut L2CFighterCommon) {
+    agent_start(fighter);
 }
 
+
 pub fn install() {
-    agent_init::install();
-    agent_reset::install();
+    Agent::new("mario")
+        .on_init(agent_init)
+        .on_start(agent_reset)
+        .install();
 }

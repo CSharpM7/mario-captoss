@@ -16,7 +16,5 @@ pub fn install() {
     frame::install();
     other_fighters::install();
 
-    //smashline::clone_weapon("link", "boomerang", "mario", "captoss",false);
-    //smashline::clone_weapon("samus", "missile", "mario", "captoss",false);
     smashline::clone_weapon("koopajr", "cannonball", "mario", "captoss",false);
 }

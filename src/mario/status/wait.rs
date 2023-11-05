@@ -1,8 +1,6 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 
-
-#[status("mario",FIGHTER_STATUS_KIND_WAIT)]
-unsafe fn wait_main(fighter: &mut L2CFighterCommon) -> L2CValue {
+pub unsafe extern "C" fn wait_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     let toReturn = fighter.status_Wait();
     fighter.sub_wait_common();
     fighter.sub_wait_motion_mtrans();
@@ -23,5 +21,7 @@ unsafe extern "C" fn wait_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue 
 }
 
 pub fn install() {
-    wait_main::install();
+    Agent::new("mario")
+        .status(Main, *FIGHTER_STATUS_KIND_WAIT, wait_main)
+        .install();
 }

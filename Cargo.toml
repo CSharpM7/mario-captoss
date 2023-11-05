@@ -15,7 +15,7 @@ skyline = "0.2.0"
 skyline_smash = { git = "https://github.com/blu-dev/skyline-smash", features = ["weak_l2cvalue"] }
 smash_script = { git = "https://github.com/blu-dev/smash-script", branch = "development" }
 #smashline.path = "/home/blujay/dev/smashline/crates/smashline"
-smashline = { path = "../smashline/crates/smashline" }
+smashline = { git = "https://github.com/blu-dev/smashline-2" }
 sharpsmashlinesuite = { path = "../../SharpSmashlineSuite", features = ["modules"] }
 #arcropolis-api = { git = "https://github.com/Raytwo/arcropolis_api"}
 #lazy_static = "1.4.0"

@@ -1,7 +1,6 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 
-#[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
-unsafe fn specials_init(fighter: &mut L2CFighterCommon) -> L2CValue {
+pub unsafe extern "C" fn specials_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
         let sum_speed_x = KineticModule::get_sum_speed_x(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
         let sum_speed_y = KineticModule::get_sum_speed_y(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
@@ -47,11 +46,10 @@ unsafe fn specials_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     }
     0.into()
 }
-#[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
-unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
+
+pub unsafe extern "C" fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
     if ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
-        //StatusModule::set_status_kind_interrupt(fighter.module_accessor,*FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE);
-        StatusModule::change_status_force(fighter.module_accessor, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPDIVE, false);
+        StatusModule::change_status_force(fighter.module_accessor, FIGHTER_MARIO_STATUS_KIND_CAPDIVE, false);
     }
     else{
         VarModule::on_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED);
@@ -84,8 +82,8 @@ unsafe fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
     );
     0.into()
 }
-#[status("mario",FIGHTER_STATUS_KIND_SPECIAL_S)]
-unsafe fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+
+pub unsafe extern "C" fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
         let air_accel_y = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_y"), 0);
@@ -151,7 +149,9 @@ unsafe fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 }
 
 pub fn install() {
-    specials_init::install();
-    specials_pre::install();
-    specials_exec::install();
+    Agent::new("mario")
+        .status(Init, *FIGHTER_STATUS_KIND_SPECIAL_S, specials_init)
+        .status(Pre, *FIGHTER_STATUS_KIND_SPECIAL_S, specials_pre)
+        .status(Exec, *FIGHTER_STATUS_KIND_SPECIAL_S, specials_exec)
+        .install();
 }

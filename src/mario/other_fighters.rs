@@ -1,6 +1,6 @@
 use crate::imports::imports_agent::*;
 
-unsafe fn is_cappy(object_boma: *mut BattleObjectModuleAccessor) -> bool {
+pub unsafe extern "C" fn is_cappy(object_boma: *mut BattleObjectModuleAccessor) -> bool {
     if utility::get_kind(&mut *object_boma) == *WEAPON_KIND_KOOPAJR_CANNONBALL {
         let owner_id = WorkModule::get_int(object_boma, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER) as u32;
         let owner_boma = smash::app::sv_battle_object::module_accessor(owner_id);
@@ -12,7 +12,7 @@ unsafe fn is_cappy(object_boma: *mut BattleObjectModuleAccessor) -> bool {
     return false;
 }
 
-unsafe fn ac_update(fighter: &mut L2CFighterCommon) {
+pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);
     let fighter_kind = utility::get_kind(&mut *fighter.module_accessor);
@@ -25,7 +25,8 @@ unsafe fn ac_update(fighter: &mut L2CFighterCommon) {
             WorkModule::set_int(fighter.module_accessor, 0x50000000, *FIGHTER_MURABITO_INSTANCE_WORK_ID_INT_TARGET_OBJECT_ID);
 
             let weapon = get_fighter_common_from_accessor(object_boma);
-            smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+            //smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
+            StatusModule::change_status_force(object_boma, CAPTOSS_STATUS_KIND_POCKET,false);
             let pos = *PostureModule::pos(object_boma);
             EffectModule::req(
                 object_boma,
@@ -44,7 +45,7 @@ unsafe fn ac_update(fighter: &mut L2CFighterCommon) {
 
 const FIGHTER_ROSETTA_STATUS_SPECIAL_LW_INT_CAPTURE_OBJECT_ID: i32 = 0x11000006;
 
-unsafe fn rosa_update(fighter: &mut L2CFighterCommon) {
+pub unsafe extern "C" fn rosa_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);
 
@@ -52,40 +53,20 @@ unsafe fn rosa_update(fighter: &mut L2CFighterCommon) {
         let object_id = WorkModule::get_int(fighter.module_accessor,FIGHTER_ROSETTA_STATUS_SPECIAL_LW_INT_CAPTURE_OBJECT_ID) as u32;
         let object = get_battle_object_from_id(object_id);
         let object_boma = sv_battle_object::module_accessor(object_id);
-        println!("Hmmm");
         if is_cappy(object_boma) {
-            println!("Cappy?");
             let cappy_status = StatusModule::status_kind(object_boma);
             if cappy_status != CAPTOSS_STATUS_KIND_SWALLOWED {
-                println!("Swallow");
                 StatusModule::change_status_force(object_boma, CAPTOSS_STATUS_KIND_SWALLOWED,false);
             }
         }
     }
 }
 
-
-#[line("murabito", main)]
-fn murabito_frame(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        ac_update(fighter);
-    }
-}
-#[line("shizue", main)]
-fn shizue_frame(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        ac_update(fighter);
-    }
-}
-#[line("rosetta", main)]
-fn rosetta_frame(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        rosa_update(fighter);
-    }
-}
-
 pub fn install() {
-    murabito_frame::install();
-    shizue_frame::install();
-    //rosetta_frame::install();
+    Agent::new("murabito")
+        .on_line(Main, ac_update)
+        .install();
+    Agent::new("shizue")
+        .on_line(Main, ac_update)
+        .install();
 }

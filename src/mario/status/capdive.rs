@@ -1,7 +1,6 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
-unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         fighter.module_accessor,
         SituationKind(*SITUATION_KIND_NONE),
@@ -31,8 +30,7 @@ unsafe fn capdive_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
-unsafe fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
+pub unsafe extern "C" fn capdive_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     WorkModule::on_flag(fighter.module_accessor,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
     VarModule::off_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED);
     let motion_g = Hash40::new("special_s_dash");
@@ -177,13 +175,14 @@ unsafe extern "C" fn capdive_main_status_loop(fighter: &mut L2CFighterCommon) ->
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPDIVE)]
-unsafe fn capdive_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn capdive_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     0.into()
 }
 
 pub fn install() {    
-    capdive_pre::install();
-    capdive_main::install();
-    capdive_end::install();
+    Agent::new("mario")
+        .status(Pre, FIGHTER_MARIO_STATUS_KIND_CAPDIVE, capdive_pre)
+        .status(Main, FIGHTER_MARIO_STATUS_KIND_CAPDIVE, capdive_main)
+        .status(End, FIGHTER_MARIO_STATUS_KIND_CAPDIVE, capdive_end)
+        .install();
 }

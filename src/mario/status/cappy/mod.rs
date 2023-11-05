@@ -6,7 +6,9 @@ mod hop;
 mod turn;
 mod jump;
 mod swallowed;
-use crate::imports::imports_agent::*;
+mod pocket;
+use crate::imports::imports_status::*;
+use super::*;
 
 pub fn install() {
     start::install();
@@ -17,6 +19,7 @@ pub fn install() {
     swallowed::install();
     turn::install();
     jump::install();
+    pocket::install();
 }
 
 
@@ -133,13 +136,11 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         let is_damaged = is_damage_status(owner_boma) || is_captured_status(owner_boma);
         let can_transition = WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_GROUND_JUMP)
         || WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_JUMP_AERIAL)
-        || [*FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
+        || [FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
 
         if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
-        //if WorkModule::is_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP)
-        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == *FIGHTER_MARIO_STATUS_KIND_NUM + FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
+        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
         && !is_damaged 
-        //&& StatusModule::prev_status_kind(weapon.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP 
         && can_transition
         {
             if captoss_distance_to_owner(weapon) < min_dis-3.0 {
@@ -150,13 +151,14 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
                 WorkModule::off_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
                 let pos = *PostureModule::pos(weapon.module_accessor);
                 let owner_pos = *PostureModule::pos(owner_boma);
-                //PostureModule::add_pos(owner_boma, &Vector3f{x: 0.0, y: 2.0, z: 0.0});
                 PostureModule::set_pos(owner_boma,&Vector3f{x: owner_pos.x, y: pos.y+1.0, z: owner_pos.z});
                 WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
-                //owner.change_status(FIGHTER_MARIO_STATUS_KIND_CAPJUMP.into(), false.into()); 
-                StatusModule::change_status_force(owner_boma, *FIGHTER_MARIO_STATUS_KIND_NUM+FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
+                StatusModule::change_status_force(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
 
-                if cap_status == CAPTOSS_STATUS_KIND_HOLD {
+                let speed_current = WorkModule::get_float(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
+                let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
+                if cap_status == CAPTOSS_STATUS_KIND_HOLD ||
+                (cap_status == CAPTOSS_STATUS_KIND_TURN && speed_current.abs() < speed_max ){
                     StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_JUMP, false);
                     KineticModule::clear_speed_all(weapon.module_accessor);
                 }
@@ -164,9 +166,15 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             }
         }
         else {
+            if can_transition {
+                StatusModule::change_status_force(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, false);
+            }
+            else{
+                captoss_effect_reappear(weapon);
+                macros::PLAY_SE(weapon, Hash40::new("se_item_boomerang_catch"));
+            }
+
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-            captoss_effect_reappear(weapon);
-            macros::PLAY_SE(weapon, Hash40::new("se_item_boomerang_catch"));
             return true;
         }
     }

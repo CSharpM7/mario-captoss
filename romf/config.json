@@ -145,6 +145,8 @@
         "fighter/mario/c00": [
             "fighter/mario/motion/body/c00/d01specialsdash.nuanmb",
             "fighter/mario/motion/body/c00/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsend.nuanmb",
             "fighter/mario/motion/body/c00/d01specialairsjump.nuanmb",
 
             "fighter/mario/model/captoss/c00/dark_model.numatb",
@@ -165,6 +167,12 @@
             "fighter/mario/motion/captoss/c00/update.prc"
         ],
         "fighter/mario/c01": [
+            "fighter/mario/motion/body/c01/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c01/dark_model.numatb",
             "fighter/mario/model/captoss/c01/light_model.numatb",
             "fighter/mario/model/captoss/c01/metamon_model.numatb",
@@ -184,6 +192,12 @@
             "fighter/mario/motion/captoss/c01/update.prc"
         ],
         "fighter/mario/c02": [
+            "fighter/mario/motion/body/c02/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c02/dark_model.numatb",
             "fighter/mario/model/captoss/c02/light_model.numatb",
             "fighter/mario/model/captoss/c02/metamon_model.numatb",
@@ -203,6 +217,12 @@
             "fighter/mario/motion/captoss/c02/update.prc"
         ],
         "fighter/mario/c03": [
+            "fighter/mario/motion/body/c03/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c03/dark_model.numatb",
             "fighter/mario/model/captoss/c03/light_model.numatb",
             "fighter/mario/model/captoss/c03/metamon_model.numatb",
@@ -222,6 +242,12 @@
             "fighter/mario/motion/captoss/c03/update.prc"
         ],
         "fighter/mario/c04": [
+            "fighter/mario/motion/body/c04/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c04/dark_model.numatb",
             "fighter/mario/model/captoss/c04/light_model.numatb",
             "fighter/mario/model/captoss/c04/metamon_model.numatb",
@@ -241,6 +267,12 @@
             "fighter/mario/motion/captoss/c04/update.prc"
         ],
         "fighter/mario/c05": [
+            "fighter/mario/motion/body/c05/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c05/dark_model.numatb",
             "fighter/mario/model/captoss/c05/light_model.numatb",
             "fighter/mario/model/captoss/c05/metamon_model.numatb",
@@ -260,6 +292,12 @@
             "fighter/mario/motion/captoss/c05/update.prc"
         ],
         "fighter/mario/c06": [
+            "fighter/mario/motion/body/c06/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c06/dark_model.numatb",
             "fighter/mario/model/captoss/c06/light_model.numatb",
             "fighter/mario/model/captoss/c06/metamon_model.numatb",
@@ -279,6 +317,12 @@
             "fighter/mario/motion/captoss/c06/update.prc"
         ],
         "fighter/mario/c07": [
+            "fighter/mario/motion/body/c07/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsjump.nuanmb",
+
             "fighter/mario/model/captoss/c07/dark_model.numatb",
             "fighter/mario/model/captoss/c07/light_model.numatb",
             "fighter/mario/model/captoss/c07/metamon_model.numatb",

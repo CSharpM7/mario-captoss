@@ -1,7 +1,6 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         fighter.module_accessor,
         app::SituationKind(*SITUATION_KIND_AIR),
@@ -31,8 +30,7 @@ unsafe fn capjump_pre(fighter: &mut smashline::L2CFighterCommon) -> smashline::L
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
+pub unsafe extern "C" fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     MotionModule::change_motion(fighter.module_accessor, Hash40::new("special_air_s_jump"), 0.0, 1.0, false, 0.0, false, false);
     let accel = 0.18;
     let distance = 1.1;
@@ -143,20 +141,28 @@ unsafe fn capjump_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
 }
 
 unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+    if fighter.is_situation(*SITUATION_KIND_GROUND) {
+        GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+        WorkModule::set_float(fighter.module_accessor,10.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_LANDING_FRAME);
+        fighter.change_status(FIGHTER_STATUS_KIND_LANDING.into(), false.into());
+        return 0.into();
+    }
+
     if fighter.sub_transition_group_check_air_cliff().get_bool() {
         return 1.into();
     }
 
     if MotionModule::is_end(fighter.module_accessor) {
-        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), false.into());
+        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), true.into());
     }
-    else if MotionModule::frame(fighter.module_accessor) > 10.0 {
-        //CancelModule::enable_cancel(fighter.module_accessor);
-    }
-    if CancelModule::is_enable_cancel(fighter.module_accessor)
-    && fighter.sub_wait_ground_check_common(false.into()).get_bool() == false
-    && fighter.sub_air_check_fall_common().get_bool() {
-        return 0.into();
+    if CancelModule::is_enable_cancel(fighter.module_accessor) {
+        if fighter.sub_wait_ground_check_common(false.into()).get_bool()
+        || fighter.sub_air_check_fall_common().get_bool() {
+            return 1.into();
+        }
+        else if fighter.sub_air_check_stop_ceil().get_bool() {
+            return 1.into();
+        }
     }
     /* 
     if CancelModule::is_enable_cancel(fighter.module_accessor) {
@@ -169,23 +175,18 @@ unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighte
         }
     }
     */
-    if fighter.is_situation(*SITUATION_KIND_GROUND) {
-        GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
-        WorkModule::set_float(fighter.module_accessor,10.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_LANDING_FRAME);
-        fighter.change_status(FIGHTER_STATUS_KIND_LANDING.into(), false.into());
-        return 0.into();
-    }
     
     0.into()
 }
 
-#[smashline::new_status("mario", FIGHTER_MARIO_STATUS_KIND_CAPJUMP)]
-unsafe fn capjump_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn capjump_end(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
     0.into()
 }
 
-pub fn install() {    
-    capjump_pre::install();
-    capjump_main::install();
-    capjump_end::install();
+pub fn install() {   
+    Agent::new("mario")
+        .status(Pre, FIGHTER_MARIO_STATUS_KIND_CAPJUMP, capjump_pre)
+        .status(Main, FIGHTER_MARIO_STATUS_KIND_CAPJUMP, capjump_main)
+        .status(End, FIGHTER_MARIO_STATUS_KIND_CAPJUMP, capjump_end)
+        .install();
 }

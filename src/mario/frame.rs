@@ -1,6 +1,6 @@
 use crate::imports::imports_agent::*;
 
-unsafe fn mario_update(fighter: &mut L2CFighterCommon) {
+pub unsafe extern "C" fn mario_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);
     let motion_kind = MotionModule::motion_kind(boma);
@@ -29,13 +29,8 @@ unsafe fn mario_update(fighter: &mut L2CFighterCommon) {
     }
 }
 
-#[line("mario", main)]
-fn mario_frame(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        mario_update(fighter);
-    }
-}
-
 pub fn install() {
-    mario_frame::install();
+    Agent::new("mario")
+        .on_line(Main, mario_update)
+        .install();
 }

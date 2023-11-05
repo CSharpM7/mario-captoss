@@ -58,7 +58,14 @@ pub mod imports_agent {
             *,
             macros::*
         },
-        smashline::*,
+        smashline::{
+            *,
+            Init,
+            Pre,
+            Main,
+            Exec,
+            End,
+        },
         crate::vars::*,
         //crate::util::*,
         //crate::data::gamemode::*,
@@ -70,6 +77,19 @@ pub mod imports_agent {
             },
             ext::*,
             getvar::*
+        },
+    };
+}
+pub mod imports_status {
+    pub use {
+        crate::imports::imports_agent::*,
+        smashline::{
+            *,
+            Init,
+            Pre,
+            Main,
+            Exec,
+            End,
         },
     };
 }

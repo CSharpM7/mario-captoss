@@ -1,14 +1,13 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 use super::*;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HAVED)]
-unsafe fn captoss_haved_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_haved_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x1df7907ec3));
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_REMOVE_SELF);
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HAVED)]
-unsafe fn captoss_haved_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_haved_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -24,8 +23,7 @@ unsafe fn captoss_haved_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HAVED)]
-unsafe fn captoss_haved_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+pub unsafe extern "C" fn captoss_haved_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("haved"), 0.0, 1.0, false, 0.0, false, false);
     weapon.fastshift(L2CValue::Ptr(captoss_haved_main_status_loop as *const () as _)).into()
 }
@@ -39,16 +37,18 @@ unsafe extern "C" fn captoss_haved_main_status_loop(weapon: &mut smashline::L2CW
 
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HAVED)]
-unsafe fn captoss_haved_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_haved_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let founder = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
     0.into()
 }
 
 
 pub fn install() {    
-    captoss_haved_init::install();
-    captoss_haved_pre::install();
-    captoss_haved_main::install();
-    captoss_haved_exec::install();
+    Agent::new("mario_captoss")
+        .status(Init, CAPTOSS_STATUS_KIND_HAVED, captoss_haved_init)
+        .status(Pre, CAPTOSS_STATUS_KIND_HAVED, captoss_haved_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_HAVED, captoss_haved_main)
+        .status(Exec, CAPTOSS_STATUS_KIND_HAVED, captoss_haved_exec)
+        .install();
 }

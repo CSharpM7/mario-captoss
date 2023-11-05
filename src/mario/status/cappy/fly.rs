@@ -1,14 +1,12 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 use super::*;
 pub const NEXT_STATUS: i32 = CAPTOSS_STATUS_KIND_HOLD;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
-unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
 
     if !captoss_owner_is_mario(weapon) {
-        println!("Isabelle fly?");
         return 0.into();
     }
     GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 2.0));
@@ -63,8 +61,7 @@ unsafe fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
-unsafe fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor,
         SituationKind(*SITUATION_KIND_AIR),
@@ -81,8 +78,7 @@ unsafe fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
-unsafe fn captoss_fly_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+pub unsafe extern "C" fn captoss_fly_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_NORMAL);
     WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     if StopModule::is_stop(weapon.module_accessor){
@@ -149,20 +145,19 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
 
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
-unsafe fn captoss_fly_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_fly_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_FLY)]
-unsafe fn captoss_fly_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_fly_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     0.into()
 }
 
 pub fn install() {    
-    captoss_fly_init::install();
-    captoss_fly_pre::install();
-    captoss_fly_main::install();
-    captoss_fly_exec::install();
-    captoss_fly_end::install();
-
+    Agent::new("mario_captoss")
+        .status(Init, CAPTOSS_STATUS_KIND_FLY, captoss_fly_init)
+        .status(Pre, CAPTOSS_STATUS_KIND_FLY, captoss_fly_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_FLY, captoss_fly_main)
+        .status(Exec, CAPTOSS_STATUS_KIND_FLY, captoss_fly_exec)
+        .status(End, CAPTOSS_STATUS_KIND_FLY, captoss_fly_end)
+        .install();
 }

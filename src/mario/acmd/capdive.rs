@@ -1,7 +1,6 @@
 use crate::imports::imports_acmd::*;
 
-#[smashline::acmd("mario", ["game_specialsdash"])]
-unsafe fn game_specials(agent: &mut L2CAgentBase) {
+unsafe extern "C" fn game_capdive(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 1.0);
     sv_kinetic_energy!(set_speed_mul, agent, FIGHTER_KINETIC_ENERGY_ID_MOTION, 0.75);
     FT_MOTION_RATE_RANGE(agent,1.0,12.0,8.0);
@@ -22,8 +21,7 @@ unsafe fn game_specials(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 36.0);
     FT_MOTION_RATE(agent,1.0);
 }
-#[smashline::acmd("mario", ["game_specialairsdash"])]
-unsafe fn game_specialairs(agent: &mut L2CAgentBase) {
+unsafe extern "C" fn game_capdiveair(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 1.0);
     sv_kinetic_energy!(set_speed_mul, agent, FIGHTER_KINETIC_ENERGY_ID_MOTION, 1.125);
     if macros::is_excute(agent) {
@@ -52,8 +50,7 @@ unsafe fn game_specialairs(agent: &mut L2CAgentBase) {
         WorkModule::set_float(agent.module_accessor, MotionModule::frame(agent.module_accessor),*FIGHTER_MARIO_STATUS_SPECIAL_S_WORK_ID_FLOAT_REFLECT_MOTION_FRAME);
     }
 }
-#[smashline::acmd("mario", ["effect_specialsdash","effect_specialairsdash"])]
-unsafe fn effect_specials(agent: &mut L2CAgentBase) {
+unsafe extern "C" fn effect_capdive(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
         macros::LANDING_EFFECT(agent, Hash40::new("sys_atk_smoke"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, false);
@@ -65,8 +62,7 @@ unsafe fn effect_specials(agent: &mut L2CAgentBase) {
         }
     }
 }
-#[smashline::acmd("mario", ["sound_specialsdash","sound_specialairsdash"])]
-unsafe fn sound_specials(agent: &mut L2CAgentBase) {
+unsafe extern "C" fn sound_capdive(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 11.0);
     if macros::is_excute(agent) {
         PLAY_SE(agent,Hash40::new("se_mario_throw_b01"));
@@ -82,8 +78,7 @@ unsafe fn sound_specials(agent: &mut L2CAgentBase) {
         }
     }
 }
-#[smashline::acmd("mario", ["expression_specialsdash","expression_specialairsdash"])]
-unsafe fn expression_specials(agent: &mut L2CAgentBase) {
+unsafe extern "C" fn expression_capdive(agent: &mut L2CAgentBase) {
     if macros::is_excute(agent) {
         slope!(agent, *MA_MSC_CMD_SLOPE_SLOPE, *SLOPE_STATUS_LR);
     }
@@ -100,9 +95,14 @@ unsafe fn expression_specials(agent: &mut L2CAgentBase) {
 }
 
 pub fn install() {
-    game_specials::install();
-    game_specialairs::install();
-    sound_specials::install();
-    effect_specials::install();
-    expression_specials::install();
+    Agent::new("mario")
+        .game_acmd("game_specialsdash", game_capdive)
+        .game_acmd("game_specialairsdash", game_capdiveair)
+        .sound_acmd("sound_specialsdash", sound_capdive)
+        .sound_acmd("sound_specialairsdash", sound_capdive)
+        .effect_acmd("effect_specialsdash", effect_capdive)
+        .effect_acmd("effect_specialairsdash", effect_capdive)
+        .expression_acmd("expression_specialsdash", expression_capdive)
+        .expression_acmd("expression_specialairsdash", expression_capdive)
+        .install();
 }

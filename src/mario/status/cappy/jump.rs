@@ -1,8 +1,7 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 use super::*;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_JUMP)]
-unsafe fn captoss_jump_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_jump_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -18,9 +17,7 @@ unsafe fn captoss_jump_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_JUMP)]
-unsafe fn captoss_jump_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("Cappy was jumped on!");
+pub unsafe extern "C" fn captoss_jump_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     if StopModule::is_stop(weapon.module_accessor){
         //captoss_ground_check(weapon);
     }
@@ -47,14 +44,14 @@ unsafe extern "C" fn captoss_jump_main_status_loop(weapon: &mut smashline::L2CWe
     }
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_JUMP)]
-unsafe fn captoss_jump_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_jump_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     0.into()
 }
 
 pub fn install() {    
-    captoss_jump_pre::install();
-    captoss_jump_main::install();
-    captoss_jump_end::install();
-
+    Agent::new("mario_captoss")
+        .status(Pre, CAPTOSS_STATUS_KIND_JUMP, captoss_jump_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_JUMP, captoss_jump_main)
+        .status(End, CAPTOSS_STATUS_KIND_JUMP, captoss_jump_end)
+        .install();
 }

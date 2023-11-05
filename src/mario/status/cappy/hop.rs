@@ -1,8 +1,7 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 use super::*;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
-unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 3.0));
     
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
@@ -16,7 +15,6 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     let speed_min = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_min"));
 
     let lr = PostureModule::lr(weapon.module_accessor);
-    println!("Hop LR: {lr}");
     WorkModule::set_int(weapon.module_accessor, life,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
     KineticModule::clear_speed_all(weapon.module_accessor);
@@ -54,8 +52,8 @@ unsafe fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
-unsafe fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -71,8 +69,7 @@ unsafe fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline:
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
-unsafe fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+pub unsafe extern "C" fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     EffectModule::detach_all(weapon.module_accessor, 5);
     //MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor, Hash40::new("hop"), -1.0,1.0,0.0);
     AttackModule::clear_all(weapon.module_accessor);
@@ -88,12 +85,12 @@ unsafe extern "C" fn captoss_hop_main_status_loop(weapon: &mut smashline::L2CWea
     captoss_check_recapture(weapon);
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
-unsafe fn captoss_hop_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_hop_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOP)]
-unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let died = captoss_dec_life(weapon);
     if died {
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
@@ -147,9 +144,11 @@ unsafe fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline
 }
 
 pub fn install() {    
-    captoss_hop_init::install();
-    captoss_hop_pre::install();
-    captoss_hop_main::install();
-    captoss_hop_end::install();
-    captoss_hop_exec::install();
+    Agent::new("mario_captoss")
+        .status(Init, CAPTOSS_STATUS_KIND_HOP, captoss_hop_init)
+        .status(Pre, CAPTOSS_STATUS_KIND_HOP, captoss_hop_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_HOP, captoss_hop_main)
+        .status(Exec, CAPTOSS_STATUS_KIND_HOP, captoss_hop_exec)
+        .status(End, CAPTOSS_STATUS_KIND_HOP, captoss_hop_end)
+        .install();
 }

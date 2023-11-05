@@ -1,10 +1,8 @@
-use crate::imports::imports_agent::*;
+use crate::imports::imports_status::*;
 use super::*;
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
-unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+pub unsafe extern "C" fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     if !captoss_owner_is_mario(weapon) {
-        println!("Isabelle hold?");
         return 0.into();
     }
     let hold_frame_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("gravity_start_frame_max")) as i32;
@@ -12,8 +10,8 @@ unsafe fn captoss_hold_init(weapon: &mut smashline::L2CWeaponCommon) -> smashlin
 
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
-unsafe fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor as _,
         SituationKind(*SITUATION_KIND_AIR),
@@ -29,8 +27,7 @@ unsafe fn captoss_hold_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline
     0.into()
 }
 
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
-unsafe fn captoss_hold_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+pub unsafe extern "C" fn captoss_hold_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     if StopModule::is_stop(weapon.module_accessor){
         //captoss_ground_check(weapon);
     }
@@ -86,7 +83,7 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
         if ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL)
         && ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL_RAW){
             WorkModule::add_int(weapon.module_accessor, -20,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
-            //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_TURN, false);
+            //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOLD, false);
             //return 0.into()
         }
     }
@@ -104,16 +101,17 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
     captoss_check_recapture(weapon);
     0.into()
 }
-#[smashline::new_status("mario_captoss", CAPTOSS_STATUS_KIND_HOLD)]
-unsafe fn captoss_hold_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+
+pub unsafe extern "C" fn captoss_hold_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     EFFECT_OFF_KIND(weapon,Hash40::new("sys_starrod_splash"),false,false);
     0.into()
 }
 
 pub fn install() {    
-    captoss_hold_init::install();
-    captoss_hold_pre::install();
-    captoss_hold_main::install();
-    captoss_hold_end::install();
-
+    Agent::new("mario_captoss")
+        .status(Init, CAPTOSS_STATUS_KIND_HOLD, captoss_hold_init)
+        .status(Pre, CAPTOSS_STATUS_KIND_HOLD, captoss_hold_pre)
+        .status(Main, CAPTOSS_STATUS_KIND_HOLD, captoss_hold_main)
+        .status(End, CAPTOSS_STATUS_KIND_HOLD, captoss_hold_end)
+        .install();
 }
