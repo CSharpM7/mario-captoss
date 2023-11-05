@@ -90,6 +90,11 @@ pub unsafe extern "C" fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponComm
     if captoss_swallowed_check(weapon) {
         return 0.into();
     }
+    if captoss_attacked_check(weapon) {
+        KineticModule::mul_speed(weapon.module_accessor, &Vector3f { x: 0.5, y: 0.0, z: 1.0 }, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+        return 0.into();
+    }
     let is_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HIT_WALL);
     let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
     let speed_current_y = KineticModule::get_sum_speed_y(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
@@ -118,10 +123,6 @@ pub unsafe extern "C" fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponComm
         speed_max*=2.0;
     }
     captoss_check_recapture(weapon);
-    if captoss_attacked_check(weapon) {
-        KineticModule::mul_speed(weapon.module_accessor, &Vector3f { x: 0.5, y: 0.0, z: 1.0 }, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
-    }
 
     if (kinetic_speed > 0.1 && !is_reflected)
     || (kinetic_speed >= speed_max-0.1 && is_reflected) 

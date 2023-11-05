@@ -4,6 +4,7 @@ use super::*;
 pub unsafe extern "C" fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     AttackModule::clear_all(weapon.module_accessor);
     GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 3.0));
+    WorkModule::on_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     //let speed_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("hop_speed_x"));
@@ -71,7 +72,6 @@ pub unsafe extern "C" fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon
 }
 
 pub unsafe extern "C" fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    println!("Hop");
     EffectModule::detach_all(weapon.module_accessor, 5);
     //MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor, Hash40::new("hop"), -1.0,1.0,0.0);
     macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
@@ -130,7 +130,9 @@ pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommo
         }
     }
     if StatusModule::is_situation_changed(weapon.module_accessor) {
-        if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {
+        if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND 
+        && WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP) {
+            WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
             LANDING_EFFECT(weapon, Hash40::new("sys_merikomi_smoke"), Hash40::new("rot"), 0, -0.5, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
             //macros::PLAY_SE(weapon, Hash40::new("se_item_sandbag_landing"));
             macros::PLAY_SE(weapon, Hash40::new("se_item_kusudama_landing"));

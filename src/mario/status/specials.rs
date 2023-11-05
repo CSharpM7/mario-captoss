@@ -91,6 +91,44 @@ pub unsafe extern "C" fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValu
 }
 
 pub unsafe extern "C" fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+    
+    let lr = PostureModule::lr(fighter.module_accessor);
+    let rot = &mut Vector3f{x: 0.0, y: 0.0, z: 0.0};
+    ModelModule::joint_global_position(
+        fighter.module_accessor,
+        Hash40::new("rot"),
+        rot,
+        true
+    );
+    let throw = &mut Vector3f{x: 0.0, y: 0.0, z: 0.0};
+    ModelModule::joint_global_position(
+        fighter.module_accessor,
+        Hash40::new("throw"),
+        throw,
+        true
+    );
+    //let new_pos = Vector3f{x: rot.x, y: throw.y, z: throw.z};
+
+    let startframe = 6.0;
+    let endframe = 22.0;
+    let frame = MotionModule::frame(fighter.module_accessor);
+    let mut offset = 6.7;
+    let delta = (frame-startframe)/(endframe-startframe);
+    let maxdist = 26.0;
+
+    if startframe <= frame && frame <= endframe {
+        let new_z = offset + (delta*maxdist);
+        let new_pos = Vector3f{x: rot.x+(new_z*lr), y: rot.y-0.5, z: throw.z};
+        ModelModule::set_joint_translate(
+            fighter.module_accessor,
+            Hash40::new("throw"),
+            &new_pos,
+            true,
+            false
+        );
+    }
+
+
     if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
         let air_accel_y = WorkModule::get_param_float(fighter.module_accessor, hash40("air_accel_y"), 0);
