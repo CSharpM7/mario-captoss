@@ -39,6 +39,17 @@ unsafe extern "C" fn captoss_ground_check(weapon: &mut smashline::L2CWeaponCommo
     }*/
     return false;
 }
+unsafe extern "C" fn captoss_attacked_check(weapon: &mut smashline::L2CWeaponCommon) -> bool{
+
+    let hit_normal = AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_HIT);
+    let hit_attack = AttackModule::is_infliction(weapon.module_accessor, *COLLISION_KIND_MASK_ATTACK);
+    //println!("Hit: {hit_normal} Attack: {hit_attack}");
+    if hit_attack
+    {
+        return true;
+    }
+    return false;
+}
 
 unsafe extern "C" fn captoss_swallowed_check(weapon: &mut smashline::L2CWeaponCommon) -> bool{
     let swallowed = WorkModule::is_flag(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_FLAG_SWALLOWED);

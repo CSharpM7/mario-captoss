@@ -6,6 +6,7 @@ pub unsafe extern "C" fn specials_init(fighter: &mut L2CFighterCommon) -> L2CVal
         let sum_speed_y = KineticModule::get_sum_speed_y(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
         let mul_x = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_start_mul_spd_x"));
         let start_accel_x = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_start_air_acl_x"));
+        let accel_y = WorkModule::get_param_float(fighter.module_accessor, hash40("param_special_s"), hash40("special_s_attack_acl_y"));
         let speed_x = sum_speed_x/mul_x;
         
         sv_kinetic_energy!(
@@ -40,6 +41,12 @@ pub unsafe extern "C" fn specials_init(fighter: &mut L2CFighterCommon) -> L2CVal
             0.0,
             0.0
         );
+        sv_kinetic_energy!(
+            set_accel,
+            fighter,
+            FIGHTER_KINETIC_ENERGY_ID_GRAVITY,
+            -accel_y
+        );
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);
         KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
         KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_MOTION);
@@ -48,7 +55,7 @@ pub unsafe extern "C" fn specials_init(fighter: &mut L2CFighterCommon) -> L2CVal
 }
 
 pub unsafe extern "C" fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
-    if ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
+    if VarModule::is_flag(fighter.battle_object, mario::instance::flag::HATLESS) {
         StatusModule::change_status_force(fighter.module_accessor, FIGHTER_MARIO_STATUS_KIND_CAPDIVE, false);
     }
     else{

@@ -118,6 +118,11 @@ pub unsafe extern "C" fn captoss_turn_exec(weapon: &mut smashline::L2CWeaponComm
         speed_max*=2.0;
     }
     captoss_check_recapture(weapon);
+    if captoss_attacked_check(weapon) {
+        KineticModule::mul_speed(weapon.module_accessor, &Vector3f { x: 0.5, y: 0.0, z: 1.0 }, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+    }
+
     if (kinetic_speed > 0.1 && !is_reflected)
     || (kinetic_speed >= speed_max-0.1 && is_reflected) 
     && !StatusModule::prev_status_kind(weapon.module_accessor, 0) == CAPTOSS_STATUS_KIND_JUMP {

@@ -23,7 +23,7 @@ pub mod mario {
             pub const CAPDIVE_ENABLE_ON_RETURN: i32 = 0x0103;
         }
         pub mod int {
-            pub const SPECIAL_LW_ROTATIONS: i32 = 0x0100;
+            pub const CAP_TIMER: i32 = 0x0100;
         }
     }
 }

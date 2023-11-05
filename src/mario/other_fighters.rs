@@ -1,17 +1,5 @@
 use crate::imports::imports_agent::*;
 
-pub unsafe extern "C" fn is_cappy(object_boma: *mut BattleObjectModuleAccessor) -> bool {
-    if utility::get_kind(&mut *object_boma) == *WEAPON_KIND_KOOPAJR_CANNONBALL {
-        let owner_id = WorkModule::get_int(object_boma, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER) as u32;
-        let owner_boma = smash::app::sv_battle_object::module_accessor(owner_id);
-        let owner_kind = utility::get_kind(&mut *owner_boma);
-        if owner_kind == *FIGHTER_KIND_MARIO {
-            return true;
-        }
-    }
-    return false;
-}
-
 pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);
@@ -22,11 +10,20 @@ pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
         if object_id == 0 || object_id == 0x50000000 {return;}
         let object_boma = sv_battle_object::module_accessor(object_id);
         if is_cappy(object_boma) {
+            StatusModule::change_status_request_from_script(fighter.module_accessor, *FIGHTER_MURABITO_STATUS_KIND_SPECIAL_N_FAILURE,false);
             WorkModule::set_int(fighter.module_accessor, 0x50000000, *FIGHTER_MURABITO_INSTANCE_WORK_ID_INT_TARGET_OBJECT_ID);
 
+            let mario_id = WorkModule::get_int(object_boma, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
+            if sv_battle_object::is_active(mario_id) {
+                let mario = get_battle_object_from_id(mario_id);
+                let mario_boma = (*mario).module_accessor;
+                let life = WorkModule::get_param_int(mario_boma, hash40("param_captoss"), hash40("life"));
+                VarModule::set_int(mario, mario::instance::int::CAP_TIMER,life);
+            }
+
             let weapon = get_fighter_common_from_accessor(object_boma);
-            //smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-            StatusModule::change_status_force(object_boma, CAPTOSS_STATUS_KIND_POCKET,false);
+            macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
+            smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             let pos = *PostureModule::pos(object_boma);
             EffectModule::req(
                 object_boma,
@@ -39,6 +36,7 @@ pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
                 false,
                 0
             );
+            
         }
     }
 }

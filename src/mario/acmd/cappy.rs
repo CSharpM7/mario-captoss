@@ -22,23 +22,15 @@ pub unsafe extern "C" fn game_turn(agent: &mut L2CAgentBase) {
 }
 
 pub unsafe extern "C" fn game_hold(agent: &mut L2CAgentBase) {
-    if macros::is_excute(agent) {
-        macros::ATTACK(agent, 0, 0, Hash40::new("top"), 0.4, 361, 20, 0, 10, 2.6, 0.0, 1.0, -3.0, None, None, None, 0.5, 0.875, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0.0, 0.0, 0, true, false, false, false, false, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_rush"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_OBJECT);
-    }
-    wait(agent.lua_state_agent, 1.0);
-    if macros::is_excute(agent) {
-        AttackModule::clear_all(agent.module_accessor);
-    }
-    wait(agent.lua_state_agent, 1.0);
     for _ in 1..i32::MAX {
         if macros::is_excute(agent) {
-            macros::ATTACK(agent, 0, 0, Hash40::new("top"), 0.4, 361, 20, 0, 10, 2.0, 0.0, 1.0, -1.0, None, None, None, 0.5, 0.875, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0.0, 0.0, 0, true, false, false, false, false, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_rush"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_OBJECT);
+            macros::ATTACK(agent, 0, 0, Hash40::new("top"), 0.4, 361, 20, 0, 10, 2.0, 0.0, 1.0, -1.0, None, None, None, 0.5, 0.875, *ATTACK_SETOFF_KIND_ON, *ATTACK_LR_CHECK_POS, false, 0.0, 0.0, 0, true, false, false, false, false, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_rush"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_OBJECT);
         }
-        wait(agent.lua_state_agent, 1.0);
+        wait(agent.lua_state_agent, 4.0);
         if macros::is_excute(agent) {
             AttackModule::clear_all(agent.module_accessor);
         }
-        wait(agent.lua_state_agent, 6.0);
+        wait(agent.lua_state_agent, 1.0);
     }
 }
 
@@ -102,6 +94,7 @@ pub unsafe extern "C" fn effect_jump(agent: &mut L2CAgentBase) {
 pub unsafe extern "C" fn sound_jump(agent: &mut L2CAgentBase) {
     let lua_state = agent.lua_state_agent;
     if is_excute(agent) {
+        macros::STOP_SE(agent, Hash40::new("se_item_boomerang_throw"));
         macros::PLAY_SE(agent, Hash40::new("se_mario_jump03"));
     }
 }

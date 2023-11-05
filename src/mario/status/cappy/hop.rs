@@ -2,6 +2,7 @@ use crate::imports::imports_status::*;
 use super::*;
 
 pub unsafe extern "C" fn captoss_hop_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    AttackModule::clear_all(weapon.module_accessor);
     GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 3.0));
     
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
@@ -70,13 +71,15 @@ pub unsafe extern "C" fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon
 }
 
 pub unsafe extern "C" fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+    println!("Hop");
     EffectModule::detach_all(weapon.module_accessor, 5);
     //MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor, Hash40::new("hop"), -1.0,1.0,0.0);
-    AttackModule::clear_all(weapon.module_accessor);
+    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     weapon.fastshift(L2CValue::Ptr(captoss_hop_main_status_loop as *const () as _)).into()
 }
 
 unsafe extern "C" fn captoss_hop_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    AttackModule::clear_all(weapon.module_accessor);
     let currentRate = MotionModule::rate(weapon.module_accessor);
     let lerpRate = if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {0.1} else {0.05};
     let newRate = lerp(currentRate,0.0,lerpRate);
@@ -91,6 +94,10 @@ pub unsafe extern "C" fn captoss_hop_end(weapon: &mut smashline::L2CWeaponCommon
 }
 
 pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    if GroundModule::is_touch(weapon.module_accessor, (*GROUND_TOUCH_FLAG_UP | *GROUND_TOUCH_FLAG_DOWN) as u32){
+        WorkModule::dec_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    }
+
     let died = captoss_dec_life(weapon);
     if died {
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
@@ -135,6 +142,14 @@ pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommo
                 weapon,
                 WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
                 -accel_x*lr*2.0,
+                0.0
+            );
+            let speed_current_x = KineticModule::get_sum_speed_x(weapon.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+            sv_kinetic_energy!(
+                set_speed,
+                weapon,
+                WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL,
+                speed_current_x,
                 0.0
             );
         }

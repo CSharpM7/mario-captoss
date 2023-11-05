@@ -9,7 +9,7 @@ pub unsafe extern "C" fn wait_main(fighter: &mut L2CFighterCommon) -> L2CValue {
 
 unsafe extern "C" fn wait_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let motion_kind = MotionModule::motion_kind(fighter.module_accessor);
-    if ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
+    if VarModule::is_flag(fighter.battle_object, mario::instance::flag::HATLESS) {
         if motion_kind == hash40("wait_2") {
             MotionModule::change_motion(fighter.module_accessor, Hash40::new("wait_3"), 0.0, 1.0, false, 0.0, false, false);
         }

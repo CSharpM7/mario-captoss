@@ -67,7 +67,7 @@ pub mod imports_agent {
             End,
         },
         crate::vars::*,
-        //crate::util::*,
+        crate::util::*,
         //crate::data::gamemode::*,
         sharpsmashlinesuite::{
             *,

@@ -1,5 +1,14 @@
 {
     "share-to-added": {
+        "fighter/mario/motion/body/c00/motion_list.bin": [
+            "fighter/mario/motion/body/c01/motion_list.bin",
+            "fighter/mario/motion/body/c02/motion_list.bin",
+            "fighter/mario/motion/body/c03/motion_list.bin",
+            "fighter/mario/motion/body/c04/motion_list.bin",
+            "fighter/mario/motion/body/c05/motion_list.bin",
+            "fighter/mario/motion/body/c06/motion_list.bin",
+            "fighter/mario/motion/body/c07/motion_list.bin"
+        ],
         "fighter/mario/model/cappy/c00/def_cappy_001_col.nutexb": [
             "fighter/mario/model/captoss/c00/def_cappy_001_col.nutexb",
             "fighter/mario/model/captoss/c01/def_cappy_001_col.nutexb",

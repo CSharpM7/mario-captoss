@@ -25,8 +25,6 @@ unsafe extern "C" fn game_specials(agent: &mut smashline::L2CAgentBase) {
     }*/
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
-        WorkModule::on_flag(agent.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_SPECIAL_FALL);
-
         if ArticleModule::is_exist(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) 
         && crate::mario::FORCE_FLY {
             let cappy = get_article_boma(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS);
@@ -38,6 +36,7 @@ unsafe extern "C" fn game_specials(agent: &mut smashline::L2CAgentBase) {
     }
     frame(agent.lua_state_agent, 15.0);
     if macros::is_excute(agent) {
+        WorkModule::on_flag(agent.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_SPECIAL_FALL);
         notify_event_msc_cmd!(agent, Hash40::new_raw(0x2127e37c07), *GROUND_CLIFF_CHECK_KIND_ALWAYS_BOTH_SIDES);
         AttackModule::clear_all(agent.module_accessor);
     }

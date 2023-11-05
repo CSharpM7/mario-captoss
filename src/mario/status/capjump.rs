@@ -141,19 +141,8 @@ pub unsafe extern "C" fn capjump_main(fighter: &mut smashline::L2CFighterCommon)
 }
 
 unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
-    if fighter.is_situation(*SITUATION_KIND_GROUND) {
-        GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
-        WorkModule::set_float(fighter.module_accessor,10.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_LANDING_FRAME);
-        fighter.change_status(FIGHTER_STATUS_KIND_LANDING.into(), false.into());
-        return 0.into();
-    }
-
     if fighter.sub_transition_group_check_air_cliff().get_bool() {
         return 1.into();
-    }
-
-    if MotionModule::is_end(fighter.module_accessor) {
-        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), true.into());
     }
     if CancelModule::is_enable_cancel(fighter.module_accessor) {
         if fighter.sub_wait_ground_check_common(false.into()).get_bool()
@@ -164,17 +153,16 @@ unsafe extern "C" fn capjump_main_status_loop(fighter: &mut smashline::L2CFighte
             return 1.into();
         }
     }
-    /* 
-    if CancelModule::is_enable_cancel(fighter.module_accessor) {
-        if fighter.sub_wait_ground_check_common(false.into()).get_bool() == false
-        || fighter.sub_air_check_fall_common().get_bool() {
-            return 0.into();
-        }
-        else if fighter.sub_air_check_stop_ceil().get_bool() {
-            return 0.into();
-        }
+    if MotionModule::is_end(fighter.module_accessor) {
+        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), true.into());
     }
-    */
+
+    if fighter.is_situation(*SITUATION_KIND_GROUND) {
+        GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+        WorkModule::set_float(fighter.module_accessor,10.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_LANDING_FRAME);
+        fighter.change_status(FIGHTER_STATUS_KIND_LANDING.into(), false.into());
+        return 0.into();
+    }
     
     0.into()
 }

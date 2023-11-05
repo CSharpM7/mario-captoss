@@ -30,7 +30,6 @@ pub unsafe extern "C" fn capcatch_pre(fighter: &mut smashline::L2CFighterCommon)
 }
 
 pub unsafe extern "C" fn capcatch_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
-    println!("Catch main");
     let motion_g = Hash40::new("special_s_end");
     let motion_a = Hash40::new("special_air_s_end");
     let motion = if fighter.is_situation(*SITUATION_KIND_GROUND) {motion_g} else {motion_a};
@@ -39,9 +38,6 @@ pub unsafe extern "C" fn capcatch_main(fighter: &mut smashline::L2CFighterCommon
 }
 
 unsafe extern "C" fn capcatch_main_status_loop(fighter: &mut smashline::L2CFighterCommon) -> smashline::L2CValue {
-    if MotionModule::is_end(fighter.module_accessor) {
-        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), true.into());
-    }
     if fighter.sub_transition_group_check_air_cliff().get_bool() {
         return 1.into();
     }
@@ -50,9 +46,13 @@ unsafe extern "C" fn capcatch_main_status_loop(fighter: &mut smashline::L2CFight
         || fighter.sub_air_check_fall_common().get_bool() {
             return 1.into();
         }
+        /*
         else if fighter.sub_air_check_stop_ceil().get_bool() {
             return 1.into();
-        }
+        }*/
+    }
+    if MotionModule::is_end(fighter.module_accessor) {
+        fighter.change_status_by_situation(FIGHTER_STATUS_KIND_WAIT.into(), FIGHTER_STATUS_KIND_FALL.into(), true.into());
     }
     
     if StatusModule::is_situation_changed(fighter.module_accessor) {

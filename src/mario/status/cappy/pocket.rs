@@ -2,11 +2,11 @@ use crate::imports::imports_status::*;
 use super::*;
 
 pub unsafe extern "C" fn captoss_pocket_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    println!("Pocket init");
     WorkModule::set_int(weapon.module_accessor, 120,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
     KineticModule::clear_speed_all(weapon.module_accessor);
     KineticModule::change_kinetic(weapon.module_accessor, *WEAPON_KINETIC_TYPE_STOP);
-    PostureModule::set_pos(weapon.module_accessor, &Vector3f{x:0.0,y:1000.0,z:0.0});
     
     0.into()
 }
@@ -28,6 +28,9 @@ pub unsafe extern "C" fn captoss_pocket_pre(weapon: &mut smashline::L2CWeaponCom
 }
 
 pub unsafe extern "C" fn captoss_pocket_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
+    println!("Pocket main");
+    PostureModule::set_pos(weapon.module_accessor, &Vector3f{x:0.0,y:1000.0,z:0.0});
+
     EffectModule::detach_all(weapon.module_accessor, 5);
     AttackModule::clear_all(weapon.module_accessor);
     weapon.fastshift(L2CValue::Ptr(captoss_pocket_main_status_loop as *const () as _)).into()

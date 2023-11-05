@@ -9,6 +9,9 @@ unsafe extern "C" fn special_s_callback(fighter: &mut L2CFighterCommon) -> L2CVa
 }
 
 unsafe extern "C" fn change_status_callback(fighter: &mut L2CFighterCommon) -> L2CValue {
+    let status_kind = StatusModule::status_kind(fighter.module_accessor);
+    let next_status_kind = StatusModule::status_kind_next(fighter.module_accessor);
+
     if fighter.is_situation(*SITUATION_KIND_GROUND) || fighter.is_situation(*SITUATION_KIND_CLIFF)
     || fighter.is_status_one_of(&[*FIGHTER_STATUS_KIND_REBIRTH, *FIGHTER_STATUS_KIND_DEAD]) {
         //Re-enable capjump
@@ -21,6 +24,16 @@ unsafe extern "C" fn change_status_callback(fighter: &mut L2CFighterCommon) -> L
     }
     else if is_damage_status(fighter.module_accessor) {
         VarModule::on_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED);
+    }
+    if (&[
+        *FIGHTER_STATUS_KIND_WIN,
+        *FIGHTER_STATUS_KIND_LOSE,
+        *FIGHTER_STATUS_KIND_ENTRY,
+        *FIGHTER_STATUS_KIND_DEAD,
+        *FIGHTER_STATUS_KIND_REBIRTH]).contains(&next_status_kind)|| !sv_information::is_ready_go() 
+    {
+        VarModule::set_int(fighter.battle_object, mario::instance::int::CAP_TIMER,0); 
+        VarModule::off_flag(fighter.battle_object, mario::instance::flag::HATLESS);
     }
     true.into()
 }

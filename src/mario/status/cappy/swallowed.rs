@@ -59,7 +59,6 @@ pub unsafe extern "C" fn captoss_swallowed_pre(weapon: &mut smashline::L2CWeapon
 }
 
 pub unsafe extern "C" fn captoss_swallowed_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
-    WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     let life = WorkModule::get_param_int(weapon.module_accessor, hash40("param_captoss"), hash40("life"));
     WorkModule::set_int(weapon.module_accessor, life,*WEAPON_INSTANCE_WORK_ID_INT_LIFE);
     if StopModule::is_stop(weapon.module_accessor){

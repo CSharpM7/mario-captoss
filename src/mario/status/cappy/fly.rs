@@ -129,6 +129,10 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     if captoss_delete_if_orphaned(weapon) {
         return 0.into();
     }
+    if captoss_attacked_check(weapon) {
+        KineticModule::mul_speed(weapon.module_accessor, &Vector3f { x: 0.5, y: 0.0, z: 1.0 }, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
+    }
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_SIDE as u32)
     {
         StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);
@@ -146,6 +150,7 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     0.into()
 }
 pub unsafe extern "C" fn captoss_fly_exec(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    //WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     0.into()
 }
 pub unsafe extern "C" fn captoss_fly_end(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
