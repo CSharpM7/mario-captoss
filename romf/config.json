@@ -1,0 +1,354 @@
+{
+    "share-to-added": {
+        "fighter/mario/motion/body/c00/motion_list.bin": [
+            "fighter/mario/motion/body/c01/motion_list.bin",
+            "fighter/mario/motion/body/c02/motion_list.bin",
+            "fighter/mario/motion/body/c03/motion_list.bin",
+            "fighter/mario/motion/body/c04/motion_list.bin",
+            "fighter/mario/motion/body/c05/motion_list.bin",
+            "fighter/mario/motion/body/c06/motion_list.bin",
+            "fighter/mario/motion/body/c07/motion_list.bin"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_col.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c01/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c02/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c03/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c04/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c05/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c06/def_cappy_001_col.nutexb",
+            "fighter/mario/model/captoss/c07/def_cappy_001_col.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c01/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c02/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c03/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c04/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c05/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c06/def_cappy_001_nor.nutexb",
+            "fighter/mario/model/captoss/c07/def_cappy_001_nor.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/def_cappy_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c01/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c02/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c03/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c04/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c05/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c06/def_cappy_001_prm.nutexb",
+            "fighter/mario/model/captoss/c07/def_cappy_001_prm.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_col.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c01/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c02/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c03/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c04/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c05/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c06/eye_cappy_b_col.nutexb",
+            "fighter/mario/model/captoss/c07/eye_cappy_b_col.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c01/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c02/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c03/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c04/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c05/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c06/eye_cappy_b_nor.nutexb",
+            "fighter/mario/model/captoss/c07/eye_cappy_b_nor.nutexb"
+        ],
+        "fighter/mario/model/cappy/c00/eye_cappy_b_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c01/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c02/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c03/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c04/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c05/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c06/eye_cappy_b_prm.nutexb",
+            "fighter/mario/model/captoss/c07/eye_cappy_b_prm.nutexb"
+        ],
+        
+        "fighter/mario/model/body/c00/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c00/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c00/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c00/def_mario_001_prm.nutexb"
+        ],
+
+        "fighter/mario/model/body/c01/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c01/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c01/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c01/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c01/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c01/def_mario_001_prm.nutexb"
+        ],
+
+        "fighter/mario/model/body/c02/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c02/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c02/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c02/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c02/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c02/def_mario_001_prm.nutexb"
+        ],
+        
+        "fighter/mario/model/body/c03/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c03/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c03/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c03/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c03/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c03/def_mario_001_prm.nutexb"
+        ],
+        
+        "fighter/mario/model/body/c04/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c04/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c04/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c04/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c04/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c04/def_mario_001_prm.nutexb"
+        ],
+
+        "fighter/mario/model/body/c05/def_mario_001_col.nutexb": [
+            "fighter/mario/model/captoss/c05/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c05/def_mario_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c05/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c05/def_mario_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c05/def_mario_001_prm.nutexb"
+        ],
+
+        "fighter/mario/model/body/c06/def_mario_b_001_col.nutexb": [
+            "fighter/mario/model/captoss/c06/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c06/def_mario_b_001_nor.nutexb": [
+            "fighter/mario/model/captoss/c06/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c06/def_mario_b_001_prm.nutexb": [
+            "fighter/mario/model/captoss/c06/def_mario_001_prm.nutexb"
+        ],
+
+        "fighter/mario/model/body/c07/def_mariot_000_col.nutexb": [
+            "fighter/mario/model/captoss/c07/def_mario_001_col.nutexb"
+        ],
+        "fighter/mario/model/body/c07/def_mariot_000_nor.nutexb": [
+            "fighter/mario/model/captoss/c07/def_mario_001_nor.nutexb"
+        ],
+        "fighter/mario/model/body/c07/def_mariot_000_prm.nutexb": [
+            "fighter/mario/model/captoss/c07/def_mario_001_prm.nutexb"
+        ]
+    },
+    "new-dir-files": {
+        "fighter/mario/c00": [
+            "fighter/mario/motion/body/c00/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c00/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c00/dark_model.numatb",
+            "fighter/mario/model/captoss/c00/light_model.numatb",
+            "fighter/mario/model/captoss/c00/metamon_model.numatb",
+            "fighter/mario/model/captoss/c00/model.nuhlpb",
+            "fighter/mario/model/captoss/c00/model.numatb",
+            "fighter/mario/model/captoss/c00/model.numdlb",
+            "fighter/mario/model/captoss/c00/model.numshb",
+            "fighter/mario/model/captoss/c00/model.numshexb",
+            "fighter/mario/model/captoss/c00/model.nusktb",
+            "fighter/mario/model/captoss/c00/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c00/model.xmb",
+            
+            "fighter/mario/motion/captoss/c00/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c00/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c00/motion_list.bin",
+            "fighter/mario/motion/captoss/c00/update.prc"
+        ],
+        "fighter/mario/c01": [
+            "fighter/mario/motion/body/c01/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c01/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c01/dark_model.numatb",
+            "fighter/mario/model/captoss/c01/light_model.numatb",
+            "fighter/mario/model/captoss/c01/metamon_model.numatb",
+            "fighter/mario/model/captoss/c01/model.nuanmb",
+            "fighter/mario/model/captoss/c01/model.nuhlpb",
+            "fighter/mario/model/captoss/c01/model.numatb",
+            "fighter/mario/model/captoss/c01/model.numdlb",
+            "fighter/mario/model/captoss/c01/model.numshb",
+            "fighter/mario/model/captoss/c01/model.numshexb",
+            "fighter/mario/model/captoss/c01/model.nusktb",
+            "fighter/mario/model/captoss/c01/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c01/model.xmb",
+            
+            "fighter/mario/motion/captoss/c01/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c01/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c01/motion_list.bin",
+            "fighter/mario/motion/captoss/c01/update.prc"
+        ],
+        "fighter/mario/c02": [
+            "fighter/mario/motion/body/c02/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c02/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c02/dark_model.numatb",
+            "fighter/mario/model/captoss/c02/light_model.numatb",
+            "fighter/mario/model/captoss/c02/metamon_model.numatb",
+            "fighter/mario/model/captoss/c02/model.nuanmb",
+            "fighter/mario/model/captoss/c02/model.nuhlpb",
+            "fighter/mario/model/captoss/c02/model.numatb",
+            "fighter/mario/model/captoss/c02/model.numdlb",
+            "fighter/mario/model/captoss/c02/model.numshb",
+            "fighter/mario/model/captoss/c02/model.numshexb",
+            "fighter/mario/model/captoss/c02/model.nusktb",
+            "fighter/mario/model/captoss/c02/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c02/model.xmb",
+            
+            "fighter/mario/motion/captoss/c02/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c02/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c02/motion_list.bin",
+            "fighter/mario/motion/captoss/c02/update.prc"
+        ],
+        "fighter/mario/c03": [
+            "fighter/mario/motion/body/c03/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c03/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c03/dark_model.numatb",
+            "fighter/mario/model/captoss/c03/light_model.numatb",
+            "fighter/mario/model/captoss/c03/metamon_model.numatb",
+            "fighter/mario/model/captoss/c03/model.nuanmb",
+            "fighter/mario/model/captoss/c03/model.nuhlpb",
+            "fighter/mario/model/captoss/c03/model.numatb",
+            "fighter/mario/model/captoss/c03/model.numdlb",
+            "fighter/mario/model/captoss/c03/model.numshb",
+            "fighter/mario/model/captoss/c03/model.numshexb",
+            "fighter/mario/model/captoss/c03/model.nusktb",
+            "fighter/mario/model/captoss/c03/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c03/model.xmb",
+            
+            "fighter/mario/motion/captoss/c03/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c03/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c03/motion_list.bin",
+            "fighter/mario/motion/captoss/c03/update.prc"
+        ],
+        "fighter/mario/c04": [
+            "fighter/mario/motion/body/c04/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c04/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c04/dark_model.numatb",
+            "fighter/mario/model/captoss/c04/light_model.numatb",
+            "fighter/mario/model/captoss/c04/metamon_model.numatb",
+            "fighter/mario/model/captoss/c04/model.nuanmb",
+            "fighter/mario/model/captoss/c04/model.nuhlpb",
+            "fighter/mario/model/captoss/c04/model.numatb",
+            "fighter/mario/model/captoss/c04/model.numdlb",
+            "fighter/mario/model/captoss/c04/model.numshb",
+            "fighter/mario/model/captoss/c04/model.numshexb",
+            "fighter/mario/model/captoss/c04/model.nusktb",
+            "fighter/mario/model/captoss/c04/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c04/model.xmb",
+            
+            "fighter/mario/motion/captoss/c04/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c04/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c04/motion_list.bin",
+            "fighter/mario/motion/captoss/c04/update.prc"
+        ],
+        "fighter/mario/c05": [
+            "fighter/mario/motion/body/c05/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c05/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c05/dark_model.numatb",
+            "fighter/mario/model/captoss/c05/light_model.numatb",
+            "fighter/mario/model/captoss/c05/metamon_model.numatb",
+            "fighter/mario/model/captoss/c05/model.nuanmb",
+            "fighter/mario/model/captoss/c05/model.nuhlpb",
+            "fighter/mario/model/captoss/c05/model.numatb",
+            "fighter/mario/model/captoss/c05/model.numdlb",
+            "fighter/mario/model/captoss/c05/model.numshb",
+            "fighter/mario/model/captoss/c05/model.numshexb",
+            "fighter/mario/model/captoss/c05/model.nusktb",
+            "fighter/mario/model/captoss/c05/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c05/model.xmb",
+            
+            "fighter/mario/motion/captoss/c05/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c05/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c05/motion_list.bin",
+            "fighter/mario/motion/captoss/c05/update.prc"
+        ],
+        "fighter/mario/c06": [
+            "fighter/mario/motion/body/c06/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c06/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c06/dark_model.numatb",
+            "fighter/mario/model/captoss/c06/light_model.numatb",
+            "fighter/mario/model/captoss/c06/metamon_model.numatb",
+            "fighter/mario/model/captoss/c06/model.nuanmb",
+            "fighter/mario/model/captoss/c06/model.nuhlpb",
+            "fighter/mario/model/captoss/c06/model.numatb",
+            "fighter/mario/model/captoss/c06/model.numdlb",
+            "fighter/mario/model/captoss/c06/model.numshb",
+            "fighter/mario/model/captoss/c06/model.numshexb",
+            "fighter/mario/model/captoss/c06/model.nusktb",
+            "fighter/mario/model/captoss/c06/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c06/model.xmb",
+            
+            "fighter/mario/motion/captoss/c06/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c06/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c06/motion_list.bin",
+            "fighter/mario/motion/captoss/c06/update.prc"
+        ],
+        "fighter/mario/c07": [
+            "fighter/mario/motion/body/c07/d01specialsdash.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsdash.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialsend.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsend.nuanmb",
+            "fighter/mario/motion/body/c07/d01specialairsjump.nuanmb",
+
+            "fighter/mario/model/captoss/c07/dark_model.numatb",
+            "fighter/mario/model/captoss/c07/light_model.numatb",
+            "fighter/mario/model/captoss/c07/metamon_model.numatb",
+            "fighter/mario/model/captoss/c07/model.nuanmb",
+            "fighter/mario/model/captoss/c07/model.nuhlpb",
+            "fighter/mario/model/captoss/c07/model.numatb",
+            "fighter/mario/model/captoss/c07/model.numdlb",
+            "fighter/mario/model/captoss/c07/model.numshb",
+            "fighter/mario/model/captoss/c07/model.numshexb",
+            "fighter/mario/model/captoss/c07/model.nusktb",
+            "fighter/mario/model/captoss/c07/model.nusrcmdlb",
+            "fighter/mario/model/captoss/c07/model.xmb",
+            
+            "fighter/mario/motion/captoss/c07/captoss.nuanmb",
+            "fighter/mario/motion/captoss/c07/capjump.nuanmb",
+            "fighter/mario/motion/captoss/c07/motion_list.bin",
+            "fighter/mario/motion/captoss/c07/update.prc"
+        ]
+    }
+}

@@ -24,12 +24,7 @@ unsafe extern "C" fn game_specials(agent: &mut smashline::L2CAgentBase) {
         shield!(agent, *MA_MSC_CMD_REFLECTOR, *COLLISION_KIND_REFLECTOR, 0, hash40("throw"), 6.5, 0.0, 3.0, -1.0, 0.0, 3.0, -1.0, 
         damage_mul, speed_mul, 50, false, life_mul, *FIGHTER_REFLECTOR_GROUP_HOMERUNBAT);
 
-    }/* 
-    frame(agent.lua_state_agent, 12.0);
-    if macros::is_excute(agent) {
-        macros::ATTACK(agent, 0, 0, Hash40::new("top"), 7.0, 110, 100, 80, 0, 7.5, 0.0, 6.7, 9.7, None, None, None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_F, false, 4, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_turn"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_MARIO_MANT, *ATTACK_REGION_OBJECT);
-        macros::ATTACK(agent, 1, 0, Hash40::new("top"), 7.0, 110, 100, 80, 0, 5.0, 0.0, 6.7, 5.0, None, None, None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_F, false, 4, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_turn"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_MARIO_MANT, *ATTACK_REGION_OBJECT);
-    }*/
+    }
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
         if ArticleModule::is_exist(agent.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) 
@@ -59,7 +54,6 @@ unsafe extern "C" fn game_specials(agent: &mut smashline::L2CAgentBase) {
 unsafe extern "C" fn effect_specials(agent: &mut smashline::L2CAgentBase) {
     frame(agent.lua_state_agent, 12.0);
     if macros::is_excute(agent) {
-        //macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("mario_supermant_wind_r"), Hash40::new("mario_supermant_wind_l"), Hash40::new("top"), 2.5, 5, 9.5, 0, 0, 0, 1, true, *EF_FLIP_NONE);
         macros::EFFECT(agent, Hash40::new("mario_supermant_flash"), Hash40::new("top"), 0, 8.0, 9, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
     }
     frame(agent.lua_state_agent, 13.0);
