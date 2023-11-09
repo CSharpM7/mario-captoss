@@ -90,9 +90,7 @@ pub unsafe extern "C" fn specials_pre(fighter: &mut L2CFighterCommon) -> L2CValu
     0.into()
 }
 
-pub unsafe extern "C" fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
-    
-    //Move throw bone for reflector//
+pub unsafe extern "C" fn exec_throw_bone(fighter: &mut L2CFighterCommon) {
     let lr = PostureModule::lr(fighter.module_accessor);
     let rot = &mut Vector3f{x: 0.0, y: 0.0, z: 0.0};
     ModelModule::joint_global_position(
@@ -127,7 +125,11 @@ pub unsafe extern "C" fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CVal
             false
         );
     }
-    //
+
+}
+pub unsafe extern "C" fn specials_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+    
+    exec_throw_bone(fighter);
 
     if StatusModule::situation_kind(fighter.module_accessor) == *SITUATION_KIND_AIR {
         KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_GRAVITY);

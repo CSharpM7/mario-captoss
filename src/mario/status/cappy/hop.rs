@@ -74,11 +74,11 @@ pub unsafe extern "C" fn captoss_hop_pre(weapon: &mut smashline::L2CWeaponCommon
 pub unsafe extern "C" fn captoss_hop_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     EffectModule::detach_all(weapon.module_accessor, 5);
     //MotionModule::change_motion_inherit_frame_keep_rate(weapon.module_accessor, Hash40::new("hop"), -1.0,1.0,0.0);
-    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     weapon.fastshift(L2CValue::Ptr(captoss_hop_main_status_loop as *const () as _)).into()
 }
 
 unsafe extern "C" fn captoss_hop_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     AttackModule::clear_all(weapon.module_accessor);
     let currentRate = MotionModule::rate(weapon.module_accessor);
     let lerpRate = if StatusModule::situation_kind(weapon.module_accessor) == *SITUATION_KIND_GROUND {0.1} else {0.05};
@@ -100,6 +100,7 @@ pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommo
 
     let died = captoss_dec_life(weapon);
     if died {
+        macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
         captoss_effect_disappear(weapon);
         captoss_effect_reappear(weapon);
@@ -134,7 +135,6 @@ pub unsafe extern "C" fn captoss_hop_exec(weapon: &mut smashline::L2CWeaponCommo
         && WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP) {
             WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
             LANDING_EFFECT(weapon, Hash40::new("sys_merikomi_smoke"), Hash40::new("rot"), 0, -0.5, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 0, 0, false);
-            //macros::PLAY_SE(weapon, Hash40::new("se_item_sandbag_landing"));
             macros::PLAY_SE(weapon, Hash40::new("se_item_kusudama_landing"));
             
             let accel_x = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));

@@ -1,7 +1,9 @@
 use crate::imports::imports_status::*;
 use super::*;
+//Unused
 
 pub unsafe extern "C" fn captoss_haved_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
+    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x1df7907ec3));
     WorkModule::off_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_REMOVE_SELF);
     0.into()
@@ -32,6 +34,7 @@ unsafe extern "C" fn captoss_haved_main_status_loop(weapon: &mut smashline::L2CW
     if WorkModule::is_flag(weapon.module_accessor, *WN_LINK_BOOMERANG_INSTANCE_WORK_ID_FLAG_REMOVE_SELF)
     {
         weapon.clear_lua_stack();
+        macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
     }
 

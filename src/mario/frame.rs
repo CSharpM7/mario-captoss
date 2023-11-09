@@ -1,10 +1,7 @@
 use crate::imports::imports_agent::*;
 
-pub unsafe extern "C" fn mario_update(fighter: &mut L2CFighterCommon) {
-    let boma = fighter.module_accessor;
-    let status_kind = StatusModule::status_kind(boma);
+pub unsafe extern "C" fn hat_mesh_visibility(fighter: &mut L2CFighterCommon, boma: *mut BattleObjectModuleAccessor, status_kind: i32) {
     let motion_kind = MotionModule::motion_kind(boma);
-    
     if [hash40("appeal_s_r"), hash40("appeal_s_l")].contains(&motion_kind){
         return;
     }
@@ -28,6 +25,13 @@ pub unsafe extern "C" fn mario_update(fighter: &mut L2CFighterCommon) {
 
     ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), !hatless);
     ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), hatless);
+}
+
+pub unsafe extern "C" fn mario_update(fighter: &mut L2CFighterCommon) {
+    let boma = fighter.module_accessor;
+    let status_kind = StatusModule::status_kind(boma);
+
+    hat_mesh_visibility(fighter,boma,status_kind);
 }
 
 pub fn install() {

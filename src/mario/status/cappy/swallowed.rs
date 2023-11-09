@@ -1,6 +1,7 @@
 use crate::imports::imports_status::*;
 use super::*;
 pub const NEXT_STATUS: i32 = CAPTOSS_STATUS_KIND_HOLD;
+//Runs after DDD spits this out//
 
 pub unsafe extern "C" fn captoss_swallowed_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let lr = PostureModule::lr(weapon.module_accessor);
@@ -27,7 +28,6 @@ pub unsafe extern "C" fn captoss_swallowed_init(weapon: &mut smashline::L2CWeapo
         max_x,
         max_y
     );
-    //let accel_x = -accel*lr*angle.cos();
     let accel_x = 0.0;
     let accel_y = 0.0;
     sv_kinetic_energy!(
@@ -77,8 +77,6 @@ unsafe extern "C" fn captoss_swallowed_main_substatus(weapon: &mut L2CWeaponComm
 unsafe extern "C" fn captoss_swallowed_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let died = captoss_dec_life(weapon);
     if died {
-        //smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
-        //captoss_effect_disappear(weapon);
         StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
         return 0.into();
     }
@@ -91,7 +89,6 @@ unsafe extern "C" fn captoss_swallowed_main_status_loop(weapon: &mut smashline::
     if captoss_reflect_check(weapon) {
         KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOP, false);
         return 0.into();
     }
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_SIDE as u32)
@@ -106,8 +103,6 @@ unsafe extern "C" fn captoss_swallowed_main_status_loop(weapon: &mut smashline::
         let bound_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("floor_bound_x_mul"));
         KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::mul_speed(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
     }
 
     0.into()

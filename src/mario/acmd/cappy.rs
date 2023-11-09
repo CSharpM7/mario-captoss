@@ -24,7 +24,7 @@ pub unsafe extern "C" fn game_turn(agent: &mut L2CAgentBase) {
 pub unsafe extern "C" fn game_hold(agent: &mut L2CAgentBase) {
     for _ in 1..i32::MAX {
         if macros::is_excute(agent) {
-            macros::ATTACK(agent, 0, 0, Hash40::new("top"), 0.4, 361, 20, 0, 10, 2.0, 0.0, 1.0, -1.0, None, None, None, 0.5, 0.875, *ATTACK_SETOFF_KIND_ON, *ATTACK_LR_CHECK_POS, false, 0.0, 0.0, 0, true, false, false, false, false, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_rush"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_OBJECT);
+            macros::ATTACK(agent, 0, 0, Hash40::new("top"), 0.4, 361, 20, 0, 10, 2.0, 0.0, 1.0, -1.25, None, None, None, 0.5, 0.875, *ATTACK_SETOFF_KIND_ON, *ATTACK_LR_CHECK_POS, false, 0.0, 0.0, 0, true, false, false, false, false, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_rush"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_OBJECT);
         }
         wait(agent.lua_state_agent, 4.0);
         if macros::is_excute(agent) {
@@ -39,8 +39,15 @@ pub unsafe extern "C" fn effect_fly(agent: &mut L2CAgentBase) {
     let boma = agent.module_accessor;
     for _ in 1..i32::MAX {
         if is_excute(agent) {
-            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
+            if StatusModule::prev_status_kind(agent.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP {
+                macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
+                LAST_EFFECT_SET_COLOR(agent,1.0,1.0,0.625);
+            }
+
+            macros::EFFECT_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, 0, 1, 0, 0, 0, 0, true, *EF_FLIP_YZ);
             LAST_EFFECT_SET_COLOR(agent,1.0,1.0,0.625);
+            let trace_alpha = if StatusModule::prev_status_kind(agent.module_accessor, 0) != CAPTOSS_STATUS_KIND_JUMP {0.5} else {0.125};
+            LAST_EFFECT_SET_ALPHA(agent,trace_alpha);
         }
         wait(agent.lua_state_agent, 5.0);
     }
@@ -54,14 +61,6 @@ pub unsafe extern "C" fn sound_fly(agent: &mut L2CAgentBase) {
             macros::PLAY_SE_REMAIN(agent, Hash40::new("se_item_boomerang_throw"));
         }
     }
-    /*
-    for _ in 1..i32::MAX {
-        if macros::is_excute(agent) {
-            macros::PLAY_SE(agent, Hash40::new("se_item_boomerang_throw"));
-        }
-        wait(agent.lua_state_agent, 90.0);
-    }
-    */
 }
 
 pub unsafe extern "C" fn effect_hold(agent: &mut L2CAgentBase) {
@@ -69,17 +68,15 @@ pub unsafe extern "C" fn effect_hold(agent: &mut L2CAgentBase) {
     let boma = agent.module_accessor;
     for _ in 1..i32::MAX {
         if is_excute(agent) {
-            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
-            LAST_EFFECT_SET_COLOR(agent,1.0,1.0,0.625);
-
-            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_starrod_splash"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.75, true, *EF_FLIP_YZ);
+        macros::EFFECT_FOLLOW(agent, Hash40::new("sys_starring_trace"),Hash40::new("top"), 0, 1.25, -1.5, 0, -90, 0, 0.175, false);
         }
-        wait(agent.lua_state_agent, 5.0);
-        if is_excute(agent) {
-            macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
-            LAST_EFFECT_SET_COLOR(agent,1.0,1.0,0.625);
+        for _ in 1..4 {
+            if is_excute(agent) {
+                macros::EFFECT_FOLLOW_FLIP(agent, Hash40::new("sys_spin_wind"), Hash40::new("sys_spin_wind"), Hash40::new("rot"), 0, 1.25, 0, 0, -90, 0, 0.4, true, *EF_FLIP_YZ);
+                LAST_EFFECT_SET_COLOR(agent,1.0,1.0,0.625);
+            }
+            wait(agent.lua_state_agent, 5.0);
         }
-        wait(agent.lua_state_agent, 5.0);
     }
 }
 
@@ -107,6 +104,7 @@ pub fn install() {
 
         .effect_acmd("effect_fly", effect_fly)
         .effect_acmd("effect_hold", effect_hold)
+        .effect_acmd("effect_turn", effect_fly)
         .effect_acmd("effect_jump", effect_jump)
 
         .sound_acmd("sound_fly", sound_fly)

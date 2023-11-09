@@ -16,7 +16,6 @@ unsafe extern "C" fn game_specials(agent: &mut smashline::L2CAgentBase) {
     frame(agent.lua_state_agent, 9.0+1.0);
     if macros::is_excute(agent) {
         search!(agent, *MA_MSC_CMD_SEARCH_SEARCH_SCH_CLR_ALL);
-        //shield!(agent, *MA_MSC_CMD_SHIELD_ON, *COLLISION_KIND_REFLECTOR, *FIGHTER_MARIO_REFLECTOR_KIND_MANTLE, *FIGHTER_REFLECTOR_GROUP_EXTEND);
         let damage_mul = 1.5; //WorkModule::get_param_float(agent.module_accessor, hash40("param_reflector"), hash40("attack_mul"));
         let speed_mul = 1.0; //WorkModule::get_param_float(agent.module_accessor, hash40("param_reflector"), hash40("speed_mul"));
         let life_mul = 1.0; //WorkModule::get_param_float(agent.module_accessor, hash40("param_reflector"), hash40("life_mul"));

@@ -1,5 +1,6 @@
 use crate::imports::imports_status::*;
 use super::*;
+//Unused
 
 pub unsafe extern "C" fn captoss_pocket_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     println!("Pocket init");

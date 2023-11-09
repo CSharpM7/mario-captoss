@@ -9,9 +9,9 @@ pub unsafe extern "C" fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommo
     if !captoss_owner_is_mario(weapon) {
         return 0.into();
     }
+    let owner_boma = get_owner_boma(weapon);
     GroundModule::set_rhombus_offset(weapon.module_accessor, &Vector2f::new(0.0, 2.0));
 
-    let owner_boma = get_owner_boma(weapon);
     let stick_y = ControlModule::get_stick_y(owner_boma);
     let stick_y_mul = if stick_y.abs() < 0.2 {0.0} else {WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("attack_mul_min"))};
     let angle = (stick_y*(std::f32::consts::PI/2.0))*stick_y_mul;
@@ -20,8 +20,6 @@ pub unsafe extern "C" fn captoss_fly_init(weapon: &mut smashline::L2CWeaponCommo
     PostureModule::set_lr(weapon.module_accessor, lr);
     let scale = PostureModule::scale(owner_boma);
     PostureModule::set_scale(weapon.module_accessor, scale*1.375,false);
-    
-    //let roty = if lr > 0.0 {0.0} else {180.0};
 
     let accel = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("brake_x"));
     let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
@@ -65,7 +63,6 @@ pub unsafe extern "C" fn captoss_fly_pre(weapon: &mut smashline::L2CWeaponCommon
     StatusModule::init_settings(
         weapon.module_accessor,
         SituationKind(*SITUATION_KIND_AIR),
-        //*WEAPON_KINETIC_TYPE_NORMAL,
         *WEAPON_KINETIC_TYPE_NONE,
         *GROUND_CORRECT_KIND_AIR as u32,
         smashline::skyline_smash::app::GroundCliffCheckKind(0),
@@ -83,6 +80,16 @@ pub unsafe extern "C" fn captoss_fly_main(weapon: &mut smashline::L2CWeaponCommo
     WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     if StopModule::is_stop(weapon.module_accessor){
         captoss_ground_check(weapon);
+    }
+    //Prevent Cappy from spawning if he starts too close to a wall
+    let owner_boma = get_owner_boma(weapon);
+    let current_pos = *PostureModule::pos(weapon.module_accessor);
+    let owner_pos = *PostureModule::pos(owner_boma);
+    let dist = 9.0;
+    if GroundModule::ray_check(owner_boma, &Vector2f{ x: owner_pos.x, y: current_pos.y}, &Vector2f{ x: dist, y: 0.0},false) == 1
+    {
+        StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);
+        PostureModule::set_pos(weapon.module_accessor, &Vector3f{x: owner_pos.x, y: current_pos.y, z: current_pos.z});
     }
 
     MotionModule::change_motion(weapon.module_accessor, Hash40::new("fly"), 0.0, 1.0, false, 0.0, false, false);
@@ -109,7 +116,6 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
     }*/
     if sum_speed_len <= speed_min_mul {
         if WorkModule::is_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_ATTACK) {
-            //weapon.change_status(CAPTOSS_STATUS_KIND_HOP.into(),false.into());
             StatusModule::change_status_force(weapon.module_accessor, NEXT_STATUS, false);
             return 0.into();
         }
@@ -144,8 +150,6 @@ unsafe extern "C" fn captoss_fly_main_status_loop(weapon: &mut smashline::L2CWea
         let bound_mul = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("floor_bound_x_mul"));
         KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         KineticModule::reflect_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 1.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::mul_speed(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
-        //KineticModule::mul_accel(weapon.module_accessor, &Vector3f{x: 1.0, y: -1.0, z: 1.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
     }
 
     0.into()

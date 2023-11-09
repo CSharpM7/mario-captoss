@@ -83,8 +83,6 @@ unsafe extern "C" fn captoss_hold_main_status_loop(weapon: &mut smashline::L2CWe
         if ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL)
         && ControlModule::check_button_off(owner_boma,*CONTROL_PAD_BUTTON_SPECIAL_RAW){
             WorkModule::add_int(weapon.module_accessor, -20,*WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_INT_GRAVITY_FRAME);
-            //StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_HOLD, false);
-            //return 0.into()
         }
     }
     if captoss_reflect_check(weapon) {

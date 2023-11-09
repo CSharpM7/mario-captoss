@@ -1,6 +1,9 @@
 use crate::imports::imports_acmd::*;
 
 unsafe extern "C" fn sound_capjump(agent: &mut smashline::L2CAgentBase) {
+    if macros::is_excute(agent) {
+        macros::STOP_SE(agent, Hash40::new("se_item_boomerang_throw"));
+    }
     frame(agent.lua_state_agent, 1.0);
     if macros::is_excute(agent) {
         macros::PLAY_SE(agent, Hash40::new("se_mario_jump03"));

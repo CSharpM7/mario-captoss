@@ -1,5 +1,6 @@
 use crate::imports::imports_agent::*;
 
+//To prevent crashes when Isabelle/Villager pocket
 pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);
@@ -10,9 +11,11 @@ pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
         if object_id == 0 || object_id == 0x50000000 {return;}
         let object_boma = sv_battle_object::module_accessor(object_id);
         if is_cappy(object_boma) {
+            //Change Villager status
             StatusModule::change_status_request_from_script(fighter.module_accessor, *FIGHTER_MURABITO_STATUS_KIND_SPECIAL_N_FAILURE,false);
             WorkModule::set_int(fighter.module_accessor, 0x50000000, *FIGHTER_MURABITO_INSTANCE_WORK_ID_INT_TARGET_OBJECT_ID);
 
+            //Set hatless timer so Mario doesn't immediately get Cappy back
             let mario_id = WorkModule::get_int(object_boma, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
             if sv_battle_object::is_active(mario_id) {
                 let mario = get_battle_object_from_id(mario_id);
@@ -21,6 +24,7 @@ pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
                 VarModule::set_int(mario, mario::instance::int::CAP_TIMER,life);
             }
 
+            //Remove cappy
             let weapon = get_fighter_common_from_accessor(object_boma);
             macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
@@ -41,8 +45,8 @@ pub unsafe extern "C" fn ac_update(fighter: &mut L2CFighterCommon) {
     }
 }
 
+//(Dep) Prevent shenanigans when Rosa gravity pulls Cappy
 const FIGHTER_ROSETTA_STATUS_SPECIAL_LW_INT_CAPTURE_OBJECT_ID: i32 = 0x11000006;
-
 pub unsafe extern "C" fn rosa_update(fighter: &mut L2CFighterCommon) {
     let boma = fighter.module_accessor;
     let status_kind = StatusModule::status_kind(boma);

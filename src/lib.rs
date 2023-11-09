@@ -26,8 +26,6 @@ mod mario;
 mod imports;
 mod util;
 pub mod vars;
-//pub mod data;
-//use data::gamemode::*;
 
 #[skyline::main(name = "mario-captoss")]
 pub fn main() {

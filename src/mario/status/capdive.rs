@@ -80,6 +80,7 @@ pub unsafe extern "C" fn capdive_main(fighter: &mut smashline::L2CFighterCommon)
 unsafe extern "C" fn capdive_main_status_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     if StatusModule::is_situation_changed(fighter.module_accessor) {
         if fighter.is_situation(*SITUATION_KIND_GROUND) {
+            //Enter landing lag after a specific frame 
             if !WorkModule::is_flag(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE) {
                 if CancelModule::is_enable_cancel(fighter.module_accessor) 
                 && false {
@@ -88,6 +89,7 @@ unsafe extern "C" fn capdive_main_status_loop(fighter: &mut L2CFighterCommon) ->
                 else {
                     let currentFrame = MotionModule::frame(fighter.module_accessor);
                     let landingFrame = WorkModule::get_float(fighter.module_accessor, *FIGHTER_MARIO_STATUS_SPECIAL_S_WORK_ID_FLOAT_REFLECT_MOTION_FRAME);
+                    //TODO: Make this a prc value instead
                     let landingLag = 16.0;
         
                     WorkModule::set_float(fighter.module_accessor, landingLag, *FIGHTER_INSTANCE_WORK_ID_FLOAT_LANDING_FRAME);

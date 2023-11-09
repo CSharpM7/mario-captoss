@@ -28,6 +28,7 @@ unsafe extern "C" fn captoss_ground_check(weapon: &mut smashline::L2CWeaponCommo
     if GroundModule::is_touch(weapon.module_accessor, *GROUND_TOUCH_FLAG_ALL as u32)
     {
         weapon.clear_lua_stack();
+        macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x18b78d41a0));
         return true;
     }
@@ -89,6 +90,7 @@ unsafe extern "C" fn captoss_delete_if_orphaned(weapon: &mut smashline::L2CWeapo
         }
     }
     if toreturn == true {
+        macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
         weapon.clear_lua_stack();
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
         captoss_effect_disappear(weapon);
@@ -138,7 +140,14 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         let owner_object = owner.battle_object;
         let owner_status = StatusModule::status_kind(owner_boma);
         let owner_frame = MotionModule::frame(owner_boma);
-        let can_cap = WorkModule::is_flag(owner_boma,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
+
+        let cancel_frame = FighterMotionModuleImpl::get_cancel_frame(owner_boma,Hash40::new_raw(MotionModule::motion_kind(owner_boma)),false) as f32;
+        let can_cap = owner_frame <= cancel_frame; //WorkModule::is_flag(owner_boma,*FIGHTER_MARIO_STATUS_SPECIAL_S_FLAG_CONTINUE);
+
+        let speed_current = WorkModule::get_float(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
+        let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
+        //Give some leeway to be able to Cap Jump
+        let turn_cap = (cap_status == CAPTOSS_STATUS_KIND_TURN && speed_current.abs() < speed_max*0.375);
         
         if [*FIGHTER_STATUS_KIND_CATCH_WAIT,*FIGHTER_STATUS_KIND_CATCH_ATTACK,*FIGHTER_STATUS_KIND_THROW].contains(&owner_status) 
         && cap_status == CAPTOSS_STATUS_KIND_HOLD {
@@ -149,8 +158,9 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         || WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_JUMP_AERIAL)
         || [FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
 
+        println!("CapStatus: {cap_status} CanCap: {can_cap} CanTrans: {can_transition}");
         if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
-        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (owner_status == FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
+        && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (turn_cap) || (owner_status == FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
         && !is_damaged 
         && can_transition
         {
@@ -166,13 +176,8 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
                 WorkModule::on_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
                 StatusModule::change_status_force(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPJUMP, false);
 
-                let speed_current = WorkModule::get_float(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLOAT_CHARGE);
-                let speed_max = WorkModule::get_param_float(weapon.module_accessor, hash40("param_captoss"), hash40("speed_max"));
-                if cap_status == CAPTOSS_STATUS_KIND_HOLD ||
-                (cap_status == CAPTOSS_STATUS_KIND_TURN && speed_current.abs() < speed_max ){
-                    StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_JUMP, false);
-                    KineticModule::clear_speed_all(weapon.module_accessor);
-                }
+                StatusModule::change_status_force(weapon.module_accessor, CAPTOSS_STATUS_KIND_JUMP, false);
+                KineticModule::clear_speed_all(weapon.module_accessor);
                 return true;
             }
         }
@@ -185,6 +190,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
                 macros::PLAY_SE(weapon, Hash40::new("se_item_boomerang_catch"));
             }
 
+            macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             return true;
         }
@@ -193,6 +199,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
 }
 
 unsafe extern "C" fn captoss_effect_disappear(weapon: &mut smashline::L2CWeaponCommon) {
+    macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
     let pos = *PostureModule::pos(weapon.module_accessor);
     EffectModule::req(
         weapon.module_accessor,
