@@ -7,3 +7,4 @@ Cargo.lock
 build.ps1
 modPath.txt
 install.ps1
+romf/**

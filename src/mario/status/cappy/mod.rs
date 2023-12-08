@@ -191,6 +191,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             }
 
             macros::STOP_SE(weapon, Hash40::new("se_item_boomerang_throw"));
+            EffectModule::kill_all(weapon.module_accessor, *EFFECT_SUB_ATTRIBUTE_NONE as u32, true, false);
             smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             return true;
         }

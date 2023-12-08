@@ -34,6 +34,10 @@ pub unsafe extern "C" fn capcatch_main(fighter: &mut smashline::L2CFighterCommon
     let motion_a = Hash40::new("special_air_s_end");
     let motion = if fighter.is_situation(*SITUATION_KIND_GROUND) {motion_g} else {motion_a};
     MotionModule::change_motion(fighter.module_accessor, motion, 0.0, 1.0, false, 0.0, false, false);
+
+    ModelModule::set_mesh_visibility(fighter.module_accessor, Hash40::new("mario_hathead"), true);
+    ModelModule::set_mesh_visibility(fighter.module_accessor, Hash40::new("mario_nohat"), true);
+
     fighter.sub_shift_status_main(L2CValue::Ptr(capcatch_main_status_loop as *const () as _))
 }
 

@@ -2,7 +2,9 @@ use crate::imports::imports_agent::*;
 
 pub unsafe extern "C" fn hat_mesh_visibility(fighter: &mut L2CFighterCommon, boma: *mut BattleObjectModuleAccessor, status_kind: i32) {
     let motion_kind = MotionModule::motion_kind(boma);
-    if [hash40("appeal_s_r"), hash40("appeal_s_l")].contains(&motion_kind){
+    let capcatch = //MotionModule::frame(boma) <= 10.0 && 
+    StatusModule::status_kind(boma) == FIGHTER_MARIO_STATUS_KIND_CAPCATCH;
+    if [hash40("appeal_s_r"), hash40("appeal_s_l"), hash40("appeal_s_l")].contains(&motion_kind) || capcatch {
         return;
     }
     let hatless = VarModule::is_flag(fighter.battle_object, mario::instance::flag::HATLESS);
@@ -24,7 +26,7 @@ pub unsafe extern "C" fn hat_mesh_visibility(fighter: &mut L2CFighterCommon, bom
     }
 
     ModelModule::set_mesh_visibility(boma, Hash40::new("mario_hathead"), !hatless);
-    ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), hatless);
+    ModelModule::set_mesh_visibility(boma, Hash40::new("mario_nohat"), (hatless&&!capcatch));
 }
 
 pub unsafe extern "C" fn mario_update(fighter: &mut L2CFighterCommon) {
