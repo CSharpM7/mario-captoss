@@ -154,15 +154,19 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
             return false;
         }
         let is_damaged = is_damage_status(owner_boma) || is_captured_status(owner_boma);
-        let can_transition = WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_GROUND_JUMP)
+        let owner_speed_y = KineticModule::get_sum_speed_y(owner_boma, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
+        let can_catch = WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_GROUND_JUMP)
         || WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_JUMP_AERIAL)
         || [FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
 
-        println!("CapStatus: {cap_status} CanCap: {can_cap} CanTrans: {can_transition}");
+        let can_transition = can_catch && (![*FIGHTER_STATUS_KIND_JUMP,*FIGHTER_STATUS_KIND_JUMP_AERIAL,*FIGHTER_STATUS_KIND_FLY,
+            FIGHTER_MARIO_STATUS_KIND_CAPDIVE].contains(&owner_status));
+
+        //println!("CapStatus: {cap_status} CanCap: {can_cap} CanTrans: {can_transition}");
         if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED)
         && (cap_status == CAPTOSS_STATUS_KIND_HOLD || (turn_cap) || (owner_status == FIGHTER_MARIO_STATUS_KIND_CAPDIVE && can_cap)) 
         && !is_damaged 
-        && can_transition
+        && can_catch
         {
             if captoss_distance_to_owner(weapon) < min_dis-3.0 {
                 if VarModule::is_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED) {
@@ -184,6 +188,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         else {
             if can_transition {
                 StatusModule::change_status_force(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, false);
+                VarModule::off_flag(owner_object, mario::instance::flag::HATLESS);
             }
             else{
                 captoss_effect_reappear(weapon);
