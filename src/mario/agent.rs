@@ -2,8 +2,8 @@ use crate::imports::imports_agent::*;
 
 //Make diving Once Per Airtime
 unsafe extern "C" fn special_s_callback(fighter: &mut L2CFighterCommon) -> L2CValue {
-    if !VarModule::is_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED) 
-    && ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
+    if !VarModule::is_flag(fighter.battle_object, mario::instance::flag::CAPDIVE_ENABLED) {
+    //&& ArticleModule::is_exist(fighter.module_accessor, FIGHTER_MARIO_GENERATE_ARTICLE_CAPTOSS) {
         return false.into();
     }
     true.into()

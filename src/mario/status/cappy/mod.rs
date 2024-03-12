@@ -173,6 +173,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
                     //VarModule::on_flag(weapon.battle_object, mario_cappy::instance::flag::CAPDIVE_ENABLE_ON_RETURN);
                 }
                 VarModule::off_flag(owner_object, mario::instance::flag::CAPJUMP_ENABLED);
+                VarModule::on_flag(owner_object, mario::instance::flag::CAPDIVE_ENABLED);
                 WorkModule::off_flag(owner_boma, *FIGHTER_MARIO_INSTANCE_WORK_ID_FLAG_SPECIAL_S_HOP);
                 let pos = *PostureModule::pos(weapon.module_accessor);
                 let owner_pos = *PostureModule::pos(owner_boma);
