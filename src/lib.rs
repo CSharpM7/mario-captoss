@@ -22,14 +22,19 @@ use smash::{
 };
 use smashline::*;
 
-mod mario;
 mod imports;
 mod util;
 pub mod vars;
+mod installer;
+
+mod mario;
 
 #[skyline::main(name = "mario-captoss")]
 pub fn main() {
     println!("[smashline2_cappy::main] Loading");
-    mario::install();
+    #[cfg(not(feature = "dev"))]
+    installer::install();
+    #[cfg(feature = "dev")]
+    installer::smashline_install();
     println!("[smashline2_cappy::main] Loaded!");
 }
