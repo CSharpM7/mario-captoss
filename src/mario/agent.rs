@@ -49,7 +49,7 @@ unsafe fn agent_start(fighter: &mut L2CFighterCommon)
         return;
     }
     GetVarManager::reset_var_module_by_object_id(fighter.battle_object_id, false);
-    fighter.global_table[USE_SPECIAL_S_CALLBACK].assign(&L2CValue::Ptr(special_s_callback as *const () as _));
+    fighter.global_table[CHECK_SPECIAL_S_UNIQ].assign(&L2CValue::Ptr(special_s_callback as *const () as _));
     fighter.global_table[STATUS_CHANGE_CALLBACK].assign(&L2CValue::Ptr(change_status_callback as *const () as _));   
 }
 pub unsafe extern "C" fn agent_init(fighter: &mut L2CFighterCommon) {

@@ -96,13 +96,13 @@ unsafe extern "C" fn expression_capdive(agent: &mut L2CAgentBase) {
 
 pub fn install() {
     Agent::new("mario")
-        .game_acmd("game_specialsdash", game_capdive)
-        .game_acmd("game_specialairsdash", game_capdiveair)
-        .sound_acmd("sound_specialsdash", sound_capdive)
-        .sound_acmd("sound_specialairsdash", sound_capdive)
-        .effect_acmd("effect_specialsdash", effect_capdive)
-        .effect_acmd("effect_specialairsdash", effect_capdive)
-        .expression_acmd("expression_specialsdash", expression_capdive)
-        .expression_acmd("expression_specialairsdash", expression_capdive)
+        .acmd("game_specialsdash", game_capdive,Priority::Default)
+        .acmd("game_specialairsdash", game_capdiveair,Priority::Default)
+        .acmd("sound_specialsdash", sound_capdive,Priority::Default)
+        .acmd("sound_specialairsdash", sound_capdive,Priority::Default)
+        .acmd("effect_specialsdash", effect_capdive,Priority::Default)
+        .acmd("effect_specialairsdash", effect_capdive,Priority::Default)
+        .acmd("expression_specialsdash", expression_capdive,Priority::Default)
+        .acmd("expression_specialairsdash", expression_capdive,Priority::Default)
         .install();
 }

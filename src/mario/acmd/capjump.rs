@@ -33,8 +33,8 @@ unsafe extern "C" fn expression_capjump(agent: &mut smashline::L2CAgentBase) {
 
 pub fn install() {    
     Agent::new("mario")
-        .sound_acmd("sound_specialairsjump", sound_capjump)
-        .effect_acmd("effect_specialairsjump", effect_capjump)
-        .expression_acmd("expression_specialairsjump", expression_capjump)
+        .acmd("sound_specialairsjump", sound_capjump,Priority::Default)
+        .acmd("effect_specialairsjump", effect_capjump,Priority::Default)
+        .acmd("expression_specialairsjump", expression_capjump,Priority::Default)
         .install();
 }

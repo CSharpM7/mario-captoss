@@ -98,17 +98,17 @@ pub unsafe extern "C" fn sound_jump(agent: &mut L2CAgentBase) {
 
 pub fn install() {        
     Agent::new("mario_captoss")
-        .game_acmd("game_fly", game_fly)
-        .game_acmd("game_hold", game_hold)
-        .game_acmd("game_turn", game_turn)
+        .acmd("game_fly", game_fly,Priority::Default)
+        .acmd("game_hold", game_hold,Priority::Default)
+        .acmd("game_turn", game_turn,Priority::Default)
 
-        .effect_acmd("effect_fly", effect_fly)
-        .effect_acmd("effect_hold", effect_hold)
-        .effect_acmd("effect_turn", effect_fly)
-        .effect_acmd("effect_jump", effect_jump)
+        .acmd("effect_fly", effect_fly,Priority::Default)
+        .acmd("effect_hold", effect_hold,Priority::Default)
+        .acmd("effect_turn", effect_fly,Priority::Default)
+        .acmd("effect_jump", effect_jump,Priority::Default)
 
-        .sound_acmd("sound_fly", sound_fly)
-        .sound_acmd("sound_turn", sound_fly)
-        .sound_acmd("sound_jump", sound_jump)
+        .acmd("sound_fly", sound_fly,Priority::Default)
+        .acmd("sound_turn", sound_fly,Priority::Default)
+        .acmd("sound_jump", sound_jump,Priority::Default)
         .install();
 }

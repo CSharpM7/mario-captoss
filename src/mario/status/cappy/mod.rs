@@ -159,7 +159,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         || WorkModule::is_enable_transition_term_group(owner_boma, *FIGHTER_STATUS_TRANSITION_GROUP_CHK_AIR_JUMP_AERIAL)
         || [FIGHTER_MARIO_STATUS_KIND_CAPDIVE,*FIGHTER_STATUS_KIND_ESCAPE_AIR].contains(&owner_status);
 
-        let can_transition = can_catch && (![*FIGHTER_STATUS_KIND_JUMP,*FIGHTER_STATUS_KIND_JUMP_AERIAL,*FIGHTER_STATUS_KIND_FLY,
+        let can_transition = can_catch && (![/**FIGHTER_STATUS_KIND_JUMP,*FIGHTER_STATUS_KIND_JUMP_AERIAL,*FIGHTER_STATUS_KIND_FLY,*/
             FIGHTER_MARIO_STATUS_KIND_CAPDIVE].contains(&owner_status));
 
         //println!("CapStatus: {cap_status} CanCap: {can_cap} CanTrans: {can_transition}");
@@ -188,7 +188,7 @@ unsafe extern "C" fn captoss_check_recapture(weapon: &mut smashline::L2CWeaponCo
         }
         else {
             if can_transition {
-                StatusModule::change_status_force(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, false);
+                StatusModule::change_status_request(owner_boma, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, false);
                 VarModule::off_flag(owner_object, mario::instance::flag::HATLESS);
             }
             else{

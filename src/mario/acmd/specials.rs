@@ -65,9 +65,9 @@ unsafe extern "C" fn effect_specials(agent: &mut smashline::L2CAgentBase) {
 
 pub fn install() {    
     Agent::new("mario")
-        .game_acmd("game_specials", game_specials)
-        .game_acmd("game_specialairs", game_specials)
-        .effect_acmd("effect_specials", effect_specials)
-        .effect_acmd("effect_specialairs", effect_specials)
+        .acmd("game_specials", game_specials,Priority::Default)
+        .acmd("game_specialairs", game_specials,Priority::Default)
+        .acmd("effect_specials", effect_specials,Priority::Default)
+        .acmd("effect_specialairs", effect_specials,Priority::Default)
         .install();
 }

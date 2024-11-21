@@ -27,11 +27,13 @@ unsafe extern "C" fn expression_capcatch(agent: &mut smashline::L2CAgentBase) {
 
 pub fn install() {    
     Agent::new("mario")
-        .sound_acmd("sound_specialsend", sound_capcatch)
-        .sound_acmd("sound_specialairsend", sound_capcatch)
-        .effect_acmd("effect_specialsend", effect_capcatch)
-        .effect_acmd("effect_specialairsend", effect_capcatch)
-        .expression_acmd("expression_specialsend", expression_capcatch)
-        .expression_acmd("expression_specialairsend", expression_capcatch)
+        .acmd("game_specialsend", acmd_stub,Priority::Default)
+        .acmd("game_specialairsend", acmd_stub,Priority::Default)
+        .acmd("sound_specialsend", sound_capcatch,Priority::Default)
+        .acmd("sound_specialairsend", sound_capcatch,Priority::Default)
+        .acmd("effect_specialsend", effect_capcatch,Priority::Default)
+        .acmd("effect_specialairsend", effect_capcatch,Priority::Default)
+        .acmd("expression_specialsend", expression_capcatch,Priority::Default)
+        .acmd("expression_specialairsend", expression_capcatch,Priority::Default)
         .install();
 }
