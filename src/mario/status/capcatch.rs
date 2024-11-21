@@ -58,12 +58,6 @@ unsafe extern "C" fn capcatch_kinetics(fighter: &mut smashline::L2CFighterCommon
         );
     }
 }
-pub unsafe extern "C" fn capcatch_init(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
-    let speed_x = KineticModule::get_sum_speed_x(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    let speed_y = KineticModule::get_sum_speed_y(fighter.module_accessor, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_MAIN);
-    println!("X: {speed_x} Y: {speed_y}");
-    0.into()
-}
 pub unsafe extern "C" fn capcatch_main(fighter: &mut smashline::L2CFighterCommon) -> L2CValue {
     //fighter.sub_set_special_start_common_kinetic_setting(Hash40::new("param_special_s").into());
     capcatch_kinetics(fighter,true);
@@ -114,7 +108,6 @@ pub unsafe extern "C" fn capcatch_end(fighter: &mut smashline::L2CFighterCommon)
 
 pub fn install() {   
     Agent::new("mario")
-    .status(Init, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, capcatch_init)
         .status(Pre, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, capcatch_pre)
         .status(Main, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, capcatch_main)
         .status(End, FIGHTER_MARIO_STATUS_KIND_CAPCATCH, capcatch_end)
